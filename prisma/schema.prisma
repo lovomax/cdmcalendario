@@ -1,0 +1,228 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Appointments {
+  Id             Int           @id(map: "PK_Appointments") @default(autoincrement())
+  ProfessionalId Int
+  UserId         Int
+  Date           DateTime      @db.Timestamptz(6)
+  Professionals  Professionals @relation(fields: [ProfessionalId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Appointments_Professionals_ProfessionalId")
+  Users          Users         @relation(fields: [UserId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Appointments_Users_UserId")
+
+  @@index([ProfessionalId], map: "IX_Appointments_ProfessionalId")
+  @@index([UserId], map: "IX_Appointments_UserId")
+}
+
+model Fields {
+  Id                 Int                  @id(map: "PK_Fields") @default(autoincrement())
+  Name               String
+  ProfessionalFields ProfessionalFields[]
+}
+
+model Forecasts {
+  Id                    Int                     @id(map: "PK_Forecasts") @default(autoincrement())
+  Name                  String
+  ProfessionalForecasts ProfessionalForecasts[]
+}
+
+model Interventions {
+  Id                        Int                         @id(map: "PK_Interventions") @default(autoincrement())
+  Name                      String
+  ProfessionalInterventions ProfessionalInterventions[]
+}
+
+model Modalities {
+  Id                     Int                      @id(map: "PK_Modalities") @default(autoincrement())
+  Name                   String
+  ProfessionalModalities ProfessionalModalities[]
+}
+
+model PaymentMethods {
+  Id                         Int                          @id(map: "PK_PaymentMethods") @default(autoincrement())
+  Name                       String
+  ProfessionalPaymentMethods ProfessionalPaymentMethods[]
+}
+
+model PhoneNumbers {
+  Id           Int    @id(map: "PK_PhoneNumbers") @default(autoincrement())
+  UserId       Int
+  Number       String
+  RoleOfNumber Role   @default(USER)
+  Users        Users  @relation(fields: [UserId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_PhoneNumbers_Users_UserId")
+
+  @@index([UserId], map: "IX_PhoneNumbers_UserId")
+}
+
+model ProfessionalFields {
+  Id             Int           @id(map: "PK_ProfessionalFields") @default(autoincrement())
+  ProfessionalId Int
+  FieldId        Int
+  Fields         Fields        @relation(fields: [FieldId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_ProfessionalFields_Fields_FieldId")
+  Professionals  Professionals @relation(fields: [ProfessionalId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_ProfessionalFields_Professionals_ProfessionalId")
+
+  @@index([FieldId], map: "IX_ProfessionalFields_FieldId")
+  @@index([ProfessionalId], map: "IX_ProfessionalFields_ProfessionalId")
+}
+
+model ProfessionalForecasts {
+  Id             Int           @id(map: "PK_ProfessionalForecasts") @default(autoincrement())
+  ProfessionalId Int
+  ForecastId     Int
+  Forecasts      Forecasts     @relation(fields: [ForecastId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_ProfessionalForecasts_Forecasts_ForecastId")
+  Professionals  Professionals @relation(fields: [ProfessionalId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_ProfessionalForecasts_Professionals_ProfessionalId")
+
+  @@index([ForecastId], map: "IX_ProfessionalForecasts_ForecastId")
+  @@index([ProfessionalId], map: "IX_ProfessionalForecasts_ProfessionalId")
+}
+
+model ProfessionalInterventions {
+  Id             Int           @id(map: "PK_ProfessionalInterventions") @default(autoincrement())
+  ProfessionalId Int
+  InterventionId Int
+  Interventions  Interventions @relation(fields: [InterventionId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_ProfessionalInterventions_Interventions_InterventionId")
+  Professionals  Professionals @relation(fields: [ProfessionalId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_ProfessionalInterventions_Professionals_ProfessionalId")
+
+  @@index([InterventionId], map: "IX_ProfessionalInterventions_InterventionId")
+  @@index([ProfessionalId], map: "IX_ProfessionalInterventions_ProfessionalId")
+}
+
+model ProfessionalModalities {
+  Id             Int           @id(map: "PK_ProfessionalModalities") @default(autoincrement())
+  ProfessionalId Int
+  ModalityId     Int
+  Modalities     Modalities    @relation(fields: [ModalityId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_ProfessionalModalities_Modalities_ModalityId")
+  Professionals  Professionals @relation(fields: [ProfessionalId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_ProfessionalModalities_Professionals_ProfessionalId")
+
+  @@index([ModalityId], map: "IX_ProfessionalModalities_ModalityId")
+  @@index([ProfessionalId], map: "IX_ProfessionalModalities_ProfessionalId")
+}
+
+model ProfessionalPaymentMethods {
+  Id              Int            @id(map: "PK_ProfessionalPaymentMethods") @default(autoincrement())
+  ProfessionalId  Int
+  PaymentMethodId Int
+  PaymentMethods  PaymentMethods @relation(fields: [PaymentMethodId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_ProfessionalPaymentMethods_PaymentMethods_PaymentMethodId")
+  Professionals   Professionals  @relation(fields: [ProfessionalId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_ProfessionalPaymentMethods_Professionals_ProfessionalId")
+
+  @@index([PaymentMethodId], map: "IX_ProfessionalPaymentMethods_PaymentMethodId")
+  @@index([ProfessionalId], map: "IX_ProfessionalPaymentMethods_ProfessionalId")
+}
+
+model ProfessionalSpecialties {
+  Id             Int           @id(map: "PK_ProfessionalSpecialties") @default(autoincrement())
+  ProfessionalId Int
+  SpecialtyId    Int
+  Professionals  Professionals @relation(fields: [ProfessionalId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_ProfessionalSpecialties_Professionals_ProfessionalId")
+  Specialties    Specialties   @relation(fields: [SpecialtyId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_ProfessionalSpecialties_Specialties_SpecialtyId")
+
+  @@index([ProfessionalId], map: "IX_ProfessionalSpecialties_ProfessionalId")
+  @@index([SpecialtyId], map: "IX_ProfessionalSpecialties_SpecialtyId")
+}
+
+model Professionals {
+  Id                         Int                          @id(map: "PK_Professionals") @default(autoincrement())
+  UserId                     Int                          @unique(map: "IX_Professionals_UserId")
+  Appointments               Appointments[]
+  ProfessionalFields         ProfessionalFields[]
+  ProfessionalForecasts      ProfessionalForecasts[]
+  ProfessionalInterventions  ProfessionalInterventions[]
+  ProfessionalModalities     ProfessionalModalities[]
+  ProfessionalPaymentMethods ProfessionalPaymentMethods[]
+  ProfessionalSpecialties    ProfessionalSpecialties[]
+  Users                      Users                        @relation(fields: [UserId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Professionals_Users_UserId")
+  RestDays                   RestDays[]
+  Schedules                  Schedules[]
+  SpecialDays                SpecialDays[]
+  Studies                    Studies[]
+}
+
+model RestDays {
+  Id             Int           @id(map: "PK_RestDays") @default(autoincrement())
+  ProfessionalId Int
+  DayOfWeek      Int           @unique(map: "IX_RestDays_DayOfWeek")
+  Professionals  Professionals @relation(fields: [ProfessionalId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_RestDays_Professionals_ProfessionalId")
+
+  @@index([ProfessionalId], map: "IX_RestDays_ProfessionalId")
+}
+
+model Schedules {
+  Id             Int           @id(map: "PK_Schedules") @default(autoincrement())
+  ProfessionalId Int
+  ScheduleStart  DateTime      @db.Timestamptz(6)
+  ScheduleEnd    DateTime      @db.Timestamptz(6)
+  RestStart      DateTime      @db.Timestamptz(6)
+  RestEnd        DateTime      @db.Timestamptz(6)
+  Professionals  Professionals @relation(fields: [ProfessionalId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Schedules_Professionals_ProfessionalId")
+
+  @@index([ProfessionalId], map: "IX_Schedules_ProfessionalId")
+}
+
+model SpecialDays {
+  Id               Int               @id(map: "PK_SpecialDays") @default(autoincrement())
+  ProfessionalId   Int
+  Date             DateTime          @unique(map: "IX_SpecialDays_Date") @db.Timestamptz(6)
+  Professionals    Professionals     @relation(fields: [ProfessionalId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_SpecialDays_Professionals_ProfessionalId")
+  SpecialSchedules SpecialSchedules?
+
+  @@index([ProfessionalId], map: "IX_SpecialDays_ProfessionalId")
+}
+
+model SpecialSchedules {
+  Id            Int         @id(map: "PK_SpecialSchedules") @default(autoincrement())
+  SpecialDayId  Int         @unique(map: "IX_SpecialSchedules_SpecialDayId")
+  ScheduleStart DateTime    @db.Timestamptz(6)
+  ScheduleEnd   DateTime    @db.Timestamptz(6)
+  RestStart     DateTime    @db.Timestamptz(6)
+  RestEnd       DateTime    @db.Timestamptz(6)
+  SpecialDays   SpecialDays @relation(fields: [SpecialDayId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_SpecialSchedules_SpecialDays_SpecialDayId")
+}
+
+model Specialties {
+  Id                      Int                       @id(map: "PK_Specialties") @default(autoincrement())
+  Name                    String
+  ProfessionalSpecialties ProfessionalSpecialties[]
+}
+
+model Studies {
+  Id             Int           @id(map: "PK_Studies") @default(autoincrement())
+  ProfessionalId Int
+  Title          String
+  Professionals  Professionals @relation(fields: [ProfessionalId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Studies_Professionals_ProfessionalId")
+
+  @@index([ProfessionalId], map: "IX_Studies_ProfessionalId")
+}
+
+model Users {
+  Id              Int               @id(map: "PK_Users") @default(autoincrement())
+  Email           String            @unique(map: "IX_Users_Email")
+  ImageURL        String
+  Name            String
+  LastName        String
+  Rut             String
+  BirthDate       DateTime          @db.Timestamptz(6)
+  Appointments    Appointments[]
+  PhoneNumbers    PhoneNumbers[]
+  Professionals   Professionals?
+  WhatsAppNumbers WhatsAppNumbers[]
+}
+
+model WhatsAppNumbers {
+  Id           Int    @id(map: "PK_WhatsAppNumbers") @default(autoincrement())
+  UserId       Int
+  Number       String
+  RoleOfNumber Role   @default(USER)
+  Users        Users  @relation(fields: [UserId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_WhatsAppNumbers_Users_UserId")
+
+  @@index([UserId], map: "IX_WhatsAppNumbers_UserId")
+}
+
+enum Role {
+  USER
+  PROFESSIONAL
+}
