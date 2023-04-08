@@ -8,218 +8,255 @@ datasource db {
 }
 
 model Appointments {
-  Id             Int           @id(map: "PK_Appointments") @default(autoincrement())
-  ProfessionalId Int
-  UserId         Int
-  Date           DateTime      @db.Timestamptz(6)
-  Professionals  Professionals @relation(fields: [ProfessionalId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Appointments_Professionals_ProfessionalId")
-  Users          Users         @relation(fields: [UserId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Appointments_Users_UserId")
+  id             Int           @id @default(autoincrement()) 
+  professionalId String 
+  userId         String 
+  date           DateTime      @db.Timestamptz(6) 
+  professionals  Professionals @relation(fields: [professionalId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users          Users         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@index([ProfessionalId], map: "IX_Appointments_ProfessionalId")
-  @@index([UserId], map: "IX_Appointments_UserId")
+  @@index([professionalId])
+  @@index([userId])
+
+  @@map("appointments")
 }
 
 model Fields {
-  Id                 Int                  @id(map: "PK_Fields") @default(autoincrement())
-  Name               String
-  ProfessionalFields ProfessionalFields[]
+  id                 Int                  @id @default(autoincrement()) 
+  name               String 
+  professionalFields ProfessionalFields[]
+  @@map("fields")
 }
 
 model Forecasts {
-  Id                    Int                     @id(map: "PK_Forecasts") @default(autoincrement())
-  Name                  String
-  ProfessionalForecasts ProfessionalForecasts[]
+  id                    Int                     @id @default(autoincrement()) 
+  name                  String 
+  professionalForecasts ProfessionalForecasts[]
+  @@map("forecasts")
 }
 
 model Interventions {
-  Id                        Int                         @id(map: "PK_Interventions") @default(autoincrement())
-  Name                      String
-  ProfessionalInterventions ProfessionalInterventions[]
+  id                        Int                         @id @default(autoincrement()) 
+  name                      String 
+  professionalInterventions ProfessionalInterventions[]
+  @@map("interventions")
 }
 
 model Modalities {
-  Id                     Int                      @id(map: "PK_Modalities") @default(autoincrement())
-  Name                   String
-  ProfessionalModalities ProfessionalModalities[]
+  id                     Int                      @id @default(autoincrement()) 
+  name                   String 
+  professionalModalities ProfessionalModalities[]
+  @@map("modalities")
 }
 
 model PaymentMethods {
-  Id                         Int                          @id(map: "PK_PaymentMethods") @default(autoincrement())
-  Name                       String
-  ProfessionalPaymentMethods ProfessionalPaymentMethods[]
+  id                         Int                          @id @default(autoincrement()) 
+  name                       String 
+  professionalPaymentMethods ProfessionalPaymentMethods[]
+  @@map("payment_methods")
 }
 
 model PhoneNumbers {
-  Id           Int    @id(map: "PK_PhoneNumbers") @default(autoincrement())
-  UserId       Int
-  Number       String
-  RoleOfNumber Role   @default(USER)
-  Users        Users  @relation(fields: [UserId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_PhoneNumbers_Users_UserId")
+  id           Int    @id @default(autoincrement()) 
+  userId       String 
+  number       String 
+  roleOfNumber Role   @default(USER)
+  users        Users  @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@index([UserId], map: "IX_PhoneNumbers_UserId")
+  @@index([userId])
+  @@map("phone_numbers")
 }
 
 model ProfessionalFields {
-  Id             Int           @id(map: "PK_ProfessionalFields") @default(autoincrement())
-  ProfessionalId Int
-  FieldId        Int
-  Fields         Fields        @relation(fields: [FieldId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_ProfessionalFields_Fields_FieldId")
-  Professionals  Professionals @relation(fields: [ProfessionalId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_ProfessionalFields_Professionals_ProfessionalId")
+  id             Int           @id @default(autoincrement()) 
+  professionalId String 
+  fieldId        Int 
+  fields         Fields        @relation(fields: [fieldId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  professionals  Professionals @relation(fields: [professionalId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@index([FieldId], map: "IX_ProfessionalFields_FieldId")
-  @@index([ProfessionalId], map: "IX_ProfessionalFields_ProfessionalId")
+  @@index([fieldId])
+  @@index([professionalId])
+  @@map("professional_fields")
 }
 
 model ProfessionalForecasts {
-  Id             Int           @id(map: "PK_ProfessionalForecasts") @default(autoincrement())
-  ProfessionalId Int
-  ForecastId     Int
-  Forecasts      Forecasts     @relation(fields: [ForecastId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_ProfessionalForecasts_Forecasts_ForecastId")
-  Professionals  Professionals @relation(fields: [ProfessionalId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_ProfessionalForecasts_Professionals_ProfessionalId")
+  id             Int           @id @default(autoincrement()) 
+  professionalId String 
+  forecastId     Int 
+  forecasts      Forecasts     @relation(fields: [forecastId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  professionals  Professionals @relation(fields: [professionalId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@index([ForecastId], map: "IX_ProfessionalForecasts_ForecastId")
-  @@index([ProfessionalId], map: "IX_ProfessionalForecasts_ProfessionalId")
+  @@index([forecastId])
+  @@index([professionalId])
+  @@map("professional_forecasts")
 }
 
 model ProfessionalInterventions {
-  Id             Int           @id(map: "PK_ProfessionalInterventions") @default(autoincrement())
-  ProfessionalId Int
-  InterventionId Int
-  Interventions  Interventions @relation(fields: [InterventionId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_ProfessionalInterventions_Interventions_InterventionId")
-  Professionals  Professionals @relation(fields: [ProfessionalId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_ProfessionalInterventions_Professionals_ProfessionalId")
+  id             Int           @id @default(autoincrement()) 
+  professionalId String 
+  interventionId Int 
+  interventions  Interventions @relation(fields: [interventionId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  professionals  Professionals @relation(fields: [professionalId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@index([InterventionId], map: "IX_ProfessionalInterventions_InterventionId")
-  @@index([ProfessionalId], map: "IX_ProfessionalInterventions_ProfessionalId")
+  @@index([interventionId])
+  @@index([professionalId])
+  @@map("professional_interventions")
 }
 
 model ProfessionalModalities {
-  Id             Int           @id(map: "PK_ProfessionalModalities") @default(autoincrement())
-  ProfessionalId Int
-  ModalityId     Int
-  Modalities     Modalities    @relation(fields: [ModalityId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_ProfessionalModalities_Modalities_ModalityId")
-  Professionals  Professionals @relation(fields: [ProfessionalId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_ProfessionalModalities_Professionals_ProfessionalId")
+  id             Int           @id @default(autoincrement()) 
+  professionalId String 
+  modalityId     Int 
+  modalities     Modalities    @relation(fields: [modalityId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  professionals  Professionals @relation(fields: [professionalId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@index([ModalityId], map: "IX_ProfessionalModalities_ModalityId")
-  @@index([ProfessionalId], map: "IX_ProfessionalModalities_ProfessionalId")
+  @@index([modalityId])
+  @@index([professionalId])
+  @@map("professional_modalities")
 }
 
 model ProfessionalPaymentMethods {
-  Id              Int            @id(map: "PK_ProfessionalPaymentMethods") @default(autoincrement())
-  ProfessionalId  Int
-  PaymentMethodId Int
-  PaymentMethods  PaymentMethods @relation(fields: [PaymentMethodId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_ProfessionalPaymentMethods_PaymentMethods_PaymentMethodId")
-  Professionals   Professionals  @relation(fields: [ProfessionalId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_ProfessionalPaymentMethods_Professionals_ProfessionalId")
+  id              Int            @id @default(autoincrement()) 
+  professionalId  String 
+  paymentMethodId Int 
+  paymentMethods  PaymentMethods @relation(fields: [paymentMethodId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  professionals   Professionals  @relation(fields: [professionalId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@index([PaymentMethodId], map: "IX_ProfessionalPaymentMethods_PaymentMethodId")
-  @@index([ProfessionalId], map: "IX_ProfessionalPaymentMethods_ProfessionalId")
+  @@index([paymentMethodId])
+  @@index([professionalId])
+  @@map("professional_payment_methods")
 }
 
 model ProfessionalSpecialties {
-  Id             Int           @id(map: "PK_ProfessionalSpecialties") @default(autoincrement())
-  ProfessionalId Int
-  SpecialtyId    Int
-  Professionals  Professionals @relation(fields: [ProfessionalId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_ProfessionalSpecialties_Professionals_ProfessionalId")
-  Specialties    Specialties   @relation(fields: [SpecialtyId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_ProfessionalSpecialties_Specialties_SpecialtyId")
+  id             Int           @id @default(autoincrement()) 
+  professionalId String 
+  specialtyId    Int 
+  professionals  Professionals @relation(fields: [professionalId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  specialties    Specialties   @relation(fields: [specialtyId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@index([ProfessionalId], map: "IX_ProfessionalSpecialties_ProfessionalId")
-  @@index([SpecialtyId], map: "IX_ProfessionalSpecialties_SpecialtyId")
+  @@index([professionalId])
+  @@index([specialtyId])
+  @@map("professional_specialties")
 }
 
 model Professionals {
-  Id                         Int                          @id(map: "PK_Professionals") @default(autoincrement())
-  UserId                     Int                          @unique(map: "IX_Professionals_UserId")
-  Appointments               Appointments[]
-  ProfessionalFields         ProfessionalFields[]
-  ProfessionalForecasts      ProfessionalForecasts[]
-  ProfessionalInterventions  ProfessionalInterventions[]
-  ProfessionalModalities     ProfessionalModalities[]
-  ProfessionalPaymentMethods ProfessionalPaymentMethods[]
-  ProfessionalSpecialties    ProfessionalSpecialties[]
-  Users                      Users                        @relation(fields: [UserId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Professionals_Users_UserId")
-  RestDays                   RestDays[]
-  Schedules                  Schedules[]
-  SpecialDays                SpecialDays[]
-  Studies                    Studies[]
+  id                         String                       @id @default(uuid())
+  userId                     String                       @unique @default(uuid())
+  appointments               Appointments[]
+  professionalFields         ProfessionalFields[]
+  professionalForecasts      ProfessionalForecasts[]
+  professionalInterventions  ProfessionalInterventions[]
+  professionalModalities     ProfessionalModalities[]
+  professionalPaymentMethods ProfessionalPaymentMethods[]
+  professionalSpecialties    ProfessionalSpecialties[]
+  users                      Users                        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  restDays                   RestDays[]
+  schedules                  Schedules[]
+  specialDays                SpecialDays[]
+  studies                    Studies[]
+
+  @@map("professionals")
 }
 
 model RestDays {
-  Id             Int           @id(map: "PK_RestDays") @default(autoincrement())
-  ProfessionalId Int
-  DayOfWeek      Int           @unique(map: "IX_RestDays_DayOfWeek")
-  Professionals  Professionals @relation(fields: [ProfessionalId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_RestDays_Professionals_ProfessionalId")
+  id             Int           @id @default(autoincrement()) 
+  professionalId String 
+  dayOfWeek      Int           @unique 
+  professionals  Professionals @relation(fields: [professionalId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@index([ProfessionalId], map: "IX_RestDays_ProfessionalId")
+  @@index([professionalId])
+  @@map("rest_days")
 }
 
 model Schedules {
-  Id             Int           @id(map: "PK_Schedules") @default(autoincrement())
-  ProfessionalId Int
-  ScheduleStart  DateTime      @db.Timestamptz(6)
-  ScheduleEnd    DateTime      @db.Timestamptz(6)
-  RestStart      DateTime      @db.Timestamptz(6)
-  RestEnd        DateTime      @db.Timestamptz(6)
-  Professionals  Professionals @relation(fields: [ProfessionalId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Schedules_Professionals_ProfessionalId")
+  id             Int           @id @default(autoincrement()) 
+  professionalId String 
+  scheduleStart  DateTime      @db.Timestamptz(6) 
+  scheduleEnd    DateTime      @db.Timestamptz(6) 
+  restStart      DateTime      @db.Timestamptz(6) 
+  restEnd        DateTime      @db.Timestamptz(6) 
+  professionals  Professionals @relation(fields: [professionalId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@index([ProfessionalId], map: "IX_Schedules_ProfessionalId")
+  @@index([professionalId])
+  @@map("schedules")
 }
 
 model SpecialDays {
-  Id               Int               @id(map: "PK_SpecialDays") @default(autoincrement())
-  ProfessionalId   Int
-  Date             DateTime          @unique(map: "IX_SpecialDays_Date") @db.Timestamptz(6)
-  Professionals    Professionals     @relation(fields: [ProfessionalId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_SpecialDays_Professionals_ProfessionalId")
-  SpecialSchedules SpecialSchedules?
+  id               Int               @id @default(autoincrement()) 
+  professionalId   String 
+  date             DateTime          @unique @db.Timestamptz(6) 
+  professionals    Professionals     @relation(fields: [professionalId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  specialSchedules SpecialSchedules?
 
-  @@index([ProfessionalId], map: "IX_SpecialDays_ProfessionalId")
+  @@index([professionalId])
+  @@map("special_days")
 }
 
 model SpecialSchedules {
-  Id            Int         @id(map: "PK_SpecialSchedules") @default(autoincrement())
-  SpecialDayId  Int         @unique(map: "IX_SpecialSchedules_SpecialDayId")
-  ScheduleStart DateTime    @db.Timestamptz(6)
-  ScheduleEnd   DateTime    @db.Timestamptz(6)
-  RestStart     DateTime    @db.Timestamptz(6)
-  RestEnd       DateTime    @db.Timestamptz(6)
-  SpecialDays   SpecialDays @relation(fields: [SpecialDayId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_SpecialSchedules_SpecialDays_SpecialDayId")
+  id            Int         @id @default(autoincrement()) 
+  specialDayId  Int         @unique 
+  scheduleStart DateTime    @db.Timestamptz(6) 
+  scheduleEnd   DateTime    @db.Timestamptz(6) 
+  restStart     DateTime    @db.Timestamptz(6) 
+  restEnd       DateTime    @db.Timestamptz(6) 
+  specialDays   SpecialDays @relation(fields: [specialDayId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("special_schedules")
 }
 
 model Specialties {
-  Id                      Int                       @id(map: "PK_Specialties") @default(autoincrement())
-  Name                    String
-  ProfessionalSpecialties ProfessionalSpecialties[]
+  id                      Int                       @id @default(autoincrement()) 
+  name                    String 
+  professionalSpecialties ProfessionalSpecialties[]
+
+  @@map("specialties")
 }
 
 model Studies {
-  Id             Int           @id(map: "PK_Studies") @default(autoincrement())
-  ProfessionalId Int
-  Title          String
-  Professionals  Professionals @relation(fields: [ProfessionalId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Studies_Professionals_ProfessionalId")
+  id             Int           @id @default(autoincrement()) 
+  professionalId String 
+  title          String 
+  professionals  Professionals @relation(fields: [professionalId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@index([ProfessionalId], map: "IX_Studies_ProfessionalId")
+  @@index([professionalId])
+  @@map("studies")
 }
 
 model Users {
-  Id              Int               @id(map: "PK_Users") @default(autoincrement())
-  Email           String            @unique(map: "IX_Users_Email")
-  ImageURL        String
-  Name            String
-  LastName        String
-  Rut             String
-  BirthDate       DateTime          @db.Timestamptz(6)
-  Appointments    Appointments[]
-  PhoneNumbers    PhoneNumbers[]
-  Professionals   Professionals?
-  WhatsAppNumbers WhatsAppNumbers[]
+  id              String               @id @default(uuid()) 
+  email           String            @unique 
+  imageURL        String? 
+  name            String 
+  lastName        String 
+  rut             String 
+  birthDate       DateTime          @db.Timestamptz(6) 
+  appointments    Appointments[]
+  phoneNumbers    PhoneNumbers[]
+  professionals   Professionals?
+  whatsAppNumbers WhatsAppNumbers[]
+  auth            Auth @relation(fields: [authId], references: [id])
+  authId          String @unique
+
+  @@map("users")
+}
+
+model Auth {
+  id             String  @id @default(uuid())
+  password       String
+  user           Users?
+
+  @@map("auth")
 }
 
 model WhatsAppNumbers {
-  Id           Int    @id(map: "PK_WhatsAppNumbers") @default(autoincrement())
-  UserId       Int
-  Number       String
-  RoleOfNumber Role   @default(USER)
-  Users        Users  @relation(fields: [UserId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_WhatsAppNumbers_Users_UserId")
+  id           Int    @id @default(autoincrement()) 
+  userId       String 
+  number       String 
+  roleOfNumber Role   @default(USER)
+  users        Users  @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@index([UserId], map: "IX_WhatsAppNumbers_UserId")
+  @@index([userId])
+  @@map("whatsapp_numbers")
 }
 
 enum Role {
