@@ -17,7 +17,6 @@ class UserModel {
 
     public async store (data : UserInformations) : Promise<User | object> {
       const { phoneNumber, whatsAppNumber, password, ...rest } = data
-      console.log(data)
       const passHash = await hash(password, 10)
       const createReq = await this.prisma.users.create({
         data: { ...rest,

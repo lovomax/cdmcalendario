@@ -6,8 +6,6 @@ class UserController {
   public async store (req: Request, res: Response) : Promise<Response> {
     const { body } = req
     const service = await UserService.execute(body)
-    console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
-    console.log(service)
     return res.status(httpStatus[service.status]).json(service)
   }
 }
