@@ -1,5 +1,5 @@
-import { PrismaClient } from '@prisma/client'
-import { hash } from 'bcrypt'
+import { PrismaClient, Users } from '@prisma/client'
+import { hash, compareSync } from 'bcrypt'
 import { User, UserInformations } from '../interfaces/users'
 
 class UserModel {
@@ -9,8 +9,8 @@ class UserModel {
       this.prisma = new PrismaClient()
     }
 
-    public async list (data) : Promise<User | object> {
-      const request = await this.prisma.users.findMany({ where: { name: data.name } })
+    public async list () : Promise<User | object> {
+      const request = await this.prisma.users.findMany()
 
       return request
     }
@@ -48,6 +48,37 @@ class UserModel {
       })
 
       return createReq
+    }
+
+    public async locate (data: UserInformations) : Promise<Users> {
+      const { password, email } = data
+      try {
+        const userFinder = await this.prisma.users.findUnique({
+          where: {
+            email: email
+          }
+        })
+
+        if (!userFinder) {
+          throw new Error('Wrong email')
+        }
+
+        const passFinder = await this.prisma.auth.findUniqueOrThrow({
+          where: {
+            id: userFinder.authId
+          }
+        })
+
+        const isMatch = compareSync(password, passFinder.password)
+
+        if (isMatch) {
+          return userFinder
+        } else {
+          throw new Error('Wrong password')
+        }
+      } catch (error) {
+        throw error
+      }
     }
 }
 
