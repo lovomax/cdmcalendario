@@ -1,6 +1,6 @@
-import professionalService from '../services/professionalService'
 import { Request, Response } from 'express'
 import { httpStatus } from '../utils/httpStatus'
+import professionalService from '../services/professionalService'
 
 class ProfessionalController {
   public async store (req: Request, res: Response) : Promise<Response> {
