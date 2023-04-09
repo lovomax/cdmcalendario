@@ -141,7 +141,7 @@ model ProfessionalSpecialties {
 
 model Professionals {
   id                         String                       @id @default(uuid())
-  userId                     String                       @unique @default(uuid())
+  userId                     String                       @unique
   appointments               Appointments[]
   professionalFields         ProfessionalFields[]
   professionalForecasts      ProfessionalForecasts[]
