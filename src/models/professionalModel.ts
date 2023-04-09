@@ -9,49 +9,37 @@ class ProfessionalModel {
     }
 
     public async store (data : ProfessionalInformations) : Promise<Professional | object> {
-      const { study, professionalFields, professionalForecasts, professionalInterventions, professionalModalities, professionalPaymentMethods, professionalSpecialties, userId } = data
-      const createReq = await this.prisma.professionals.create({
-        data: {
-          userId,
-          studies: {
-            create: {
-              ...study
-            }
-          },
-          professionalFields: {
-            create: {
-              ...professionalFields
-            }
-          },
-          professionalForecasts: {
-            create: {
-              ...professionalForecasts
-            }
-          },
-          professionalInterventions: {
-            create: {
-              ...professionalInterventions
-            }
-          },
-          professionalModalities: {
-            create: {
-              ...professionalModalities
-            }
-          },
-          professionalPaymentMethods: {
-            create: {
-              ...professionalPaymentMethods
-            }
-          },
-          professionalSpecialties: {
-            create: {
-              ...professionalSpecialties
+      const { study, userId, ...rest } = data
+      try {
+        const createReq = await this.prisma.professionals.create({
+          data: {
+            userId,
+            studies: {
+              create: {
+                ...study
+              }
             }
           }
-        }
-      })
+        })
 
-      return createReq
+        Object.entries(rest).map(async ([key, value]) => {
+          if (value) {
+            const valueWithId = value.map((obj) => {
+              const proId = { ...obj, professionalId: createReq.id }
+              return proId
+            })
+
+            const attributeReq = await this.prisma[key].createMany({ data: valueWithId })
+
+            return attributeReq
+          }
+        })
+
+        return { ...createReq }
+      } catch (err) {
+        console.log(JSON.stringify(err))
+        return {}
+      }
     }
 }
 
