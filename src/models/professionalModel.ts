@@ -37,8 +37,7 @@ class ProfessionalModel {
 
         return { ...createReq }
       } catch (err) {
-        console.log(JSON.stringify(err))
-        return {}
+        throw new Error('Something failed while registering a new professional')
       }
     }
 }

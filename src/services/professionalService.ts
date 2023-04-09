@@ -23,7 +23,6 @@ class ProfessionalService {
 
         return this.objResponse(CREATED, OK, createReq)
       } catch (err) {
-        console.log(err)
         return this.objResponse(FAILED, OK, err)
       }
     }
