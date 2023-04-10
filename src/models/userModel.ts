@@ -1,6 +1,6 @@
 import { PrismaClient, Users } from '@prisma/client'
 import { hash, compareSync } from 'bcrypt'
-import { User, UserInformations } from '../interfaces/users'
+import { User, UserInformations, UserUpdateInformations } from '../interfaces/users'
 
 class UserModel {
     private prisma : PrismaClient
@@ -50,7 +50,7 @@ class UserModel {
       return createReq
     }
 
-    public async locate (data: UserInformations) : Promise<Users> {
+    public async logIn (data: UserInformations) : Promise<Users> {
       const { password, email } = data
       try {
         const userFinder = await this.prisma.users.findUnique({
@@ -79,6 +79,17 @@ class UserModel {
       } catch (error) {
         throw error
       }
+    }
+
+    public async update (data: UserUpdateInformations) : Promise<User | object> {
+      const updateReq = this.prisma.users.update({
+        where: {
+          email: data.email
+        },
+        data
+      })
+
+      return updateReq
     }
 }
 

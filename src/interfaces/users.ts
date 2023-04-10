@@ -33,6 +33,7 @@ export interface WhatsAppNumbers {
 }
 
 export interface Auth {
+    userId: string
     password: string
 }
 
@@ -40,6 +41,12 @@ export interface UserInformations extends User {
     phoneNumber: string
     whatsAppNumber: string
     password: string
+}
+
+export interface UserUpdateInformations extends User {
+    phoneNumber: PhoneNumbers[]
+    whatsAppNumber: WhatsAppNumbers[]
+    password: Auth
 }
 
 type role ='USER' | 'PROFESSIONAL'

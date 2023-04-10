@@ -1,34 +1,41 @@
 export interface Study {
+    id: number
     professionalId: string
     title: string
 }
 
 export interface ProfessionalFields{
+    id: number
     professionalId: string
     fieldId: number
 }
 
 export interface ProfessionalForecasts{
+    id: number
     professionalId: string
     forecastId: number
 }
 
 export interface ProfessionalInterventions{
+    id: number
     professionalId: string
     interventionId: number
 }
 
 export interface ProfessionalModalities{
+    id: number
     professionalId: string
     modalityId: number
 }
 
 export interface ProfessionalPaymentMethods{
+    id: number
     professionalId: string
     paymentMethodId: number
 }
 
 export interface ProfessionalSpecialties{
+    id: number
     professionalId: string
     specialtyId: number
 }
@@ -95,6 +102,17 @@ export interface ProfessionalResponse {
 
 export interface ProfessionalInformations extends Professional {
     study: Study
+    professionalFields: ProfessionalFields[]
+    professionalForecasts: ProfessionalForecasts[]
+    professionalInterventions: ProfessionalInterventions[]
+    professionalModalities: ProfessionalModalities[]
+    professionalPaymentMethods: ProfessionalPaymentMethods[]
+    professionalSpecialties: ProfessionalSpecialties[]
+}
+
+export interface ProfessionalUpdateInformations{
+    professionalId: string
+    study: Study[]
     professionalFields: ProfessionalFields[]
     professionalForecasts: ProfessionalForecasts[]
     professionalInterventions: ProfessionalInterventions[]
