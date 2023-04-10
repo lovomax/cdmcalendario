@@ -15,5 +15,7 @@ routes.put('/update-user', userController.update)
 routes.get('/list', verifyToken, userController.list)
 
 routes.post('/sign-professional', verifyToken, professionalController.store)
+routes.put('/update-professional', professionalController.update)
+routes.get('/get-professionals', professionalController.list)
 
 export default routes

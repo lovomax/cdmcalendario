@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { Professional, ProfessionalInformations } from '../interfaces/professionals'
+import { Professional, ProfessionalInformations, ProfessionalUpdateInformations } from '../interfaces/professionals'
 
 class ProfessionalModel {
     private prisma : PrismaClient
@@ -39,6 +39,34 @@ class ProfessionalModel {
       } catch (err) {
         throw new Error('Something failed while registering a new professional')
       }
+    }
+
+    public async update (data : ProfessionalUpdateInformations) : Promise<ProfessionalInformations| object> {
+      const { professionalId, ...rest } = data
+
+      const updateReq = Object.entries(rest).map(async ([key, value]) => {
+        if (value) {
+          const arrayAttribute = await value.map(async (obj) => {
+            if (obj.id) {
+              return this.prisma[key].delete({ where: { id: obj.id } })
+            } else {
+              const objWithId = { ...obj, professionalId: professionalId }
+              return this.prisma[key].create({ data: { ...objWithId } })
+            }
+          })
+
+          return arrayAttribute
+        }
+      })
+
+      console.log(updateReq)
+      return updateReq
+    }
+
+    public async list () : Promise<ProfessionalInformations | object> {
+      const listReq = await this.prisma.professionals.findMany({ include: { users: true, professionalFields: true, professionalForecasts: true, professionalInterventions: true, professionalModalities: true, professionalPaymentMethods: true, professionalSpecialties: true } })
+
+      return listReq
     }
 }
 
