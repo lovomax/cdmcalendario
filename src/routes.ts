@@ -11,6 +11,7 @@ routes.get('/checkhealth', (_req, res) => {
 
 routes.post('/sign-up', userController.store)
 routes.post('/log-in', userController.logIn)
+routes.put('/update-user', userController.update)
 routes.get('/list', verifyToken, userController.list)
 
 routes.post('/sign-professional', verifyToken, professionalController.store)
