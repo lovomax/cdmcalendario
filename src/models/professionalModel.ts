@@ -44,23 +44,31 @@ class ProfessionalModel {
     public async update (data : ProfessionalUpdateInformations) : Promise<ProfessionalInformations| object> {
       const { professionalId, ...rest } = data
 
-      const updateReq = Object.entries(rest).map(async ([key, value]) => {
+      const updateReq = Object.entries(rest).map(([key, value]) => {
         if (value) {
-          const arrayAttribute = await value.map(async (obj) => {
+          const arrayAttribute = value.map(async (obj) => {
             if (obj.id) {
-              return this.prisma[key].delete({ where: { id: obj.id } })
+              const sameProfessional = await this.prisma[key].findFirst({ where: { id: obj.id } })
+              if (sameProfessional.professionalId === professionalId) {
+                return this.prisma[key].delete({ where: { id: obj.id } })
+              }
+              return { message: `Unathorized attempt to delete an entry` }
             } else {
               const objWithId = { ...obj, professionalId: professionalId }
-              return this.prisma[key].create({ data: { ...objWithId } })
+              const repeated = await this.prisma[key].findFirst({ where: { fieldId: objWithId.fieldId } })
+              if (repeated.length) {
+                return this.prisma[key].create({ data: { ...objWithId } })
+              }
+              return { message: `Professional is already associated with that ${key} with the Id ${objWithId.fieldId}` }
             }
           })
 
           return arrayAttribute
         }
-      })
+      }).flat().filter((element) => element !== undefined)
 
-      console.log(updateReq)
-      return updateReq
+      const arrayPromise = await Promise.all(updateReq)
+      return arrayPromise
     }
 
     public async list () : Promise<ProfessionalInformations | object> {

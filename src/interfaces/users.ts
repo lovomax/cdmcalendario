@@ -20,12 +20,14 @@ export interface Appointments {
 }
 
 export interface PhoneNumbers {
+    id: number
     userId: string
     number: string
     roleOfNumber: role
 }
 
 export interface WhatsAppNumbers {
+    id: number
     userId: string
     number: string
     roleOfNumber: role
@@ -44,8 +46,8 @@ export interface UserInformations extends User {
 }
 
 export interface UserUpdateInformations extends User {
-    phoneNumber: PhoneNumbers[]
-    whatsAppNumber: WhatsAppNumbers[]
+    phoneNumbers: PhoneNumbers[]
+    whatsAppNumbers: WhatsAppNumbers[]
     password: Auth
 }
 
