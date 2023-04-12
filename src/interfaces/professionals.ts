@@ -40,32 +40,6 @@ export interface ProfessionalSpecialties{
     specialtyId: number
 }
 
-export interface RestDay{
-    professionalId: string
-    dayOfWeek: number
-}
-
-export interface Schedule{
-    professionalId: string
-    scheduleStart: Date
-    scheduleEnd: Date
-    restStart: Date
-    restEnd: Date
-}
-
-export interface SpecialDay{
-    professionalId: string
-    date: Date
-}
-
-export interface SpecialSchedule {
-    specialDayId: number
-    scheduleStart: Date
-    scheduleEnd: Date
-    restStart: Date
-    restEnd: Date
-}
-
 export interface Field{
     name: string
 }

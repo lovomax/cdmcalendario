@@ -82,14 +82,42 @@ class UserModel {
     }
 
     public async update (data: UserUpdateInformations) : Promise<User | object> {
-      const updateReq = this.prisma.users.update({
+      const { whatsAppNumbers, phoneNumbers, ...rest } = data
+
+      Object.entries({ whatsAppNumbers, phoneNumbers }).map(([key, value]) => {
+        if (value !== undefined && value.length) {
+          const attributeReq = value.map(async (obj) => {
+            if (obj.id) {
+              return this.prisma[key].update({ where: { id: obj.id }, data: { ...obj } })
+            }
+            const repeatedNumber = await this.prisma[key].findFirst({ where: { number: obj.number } })
+
+            if (!repeatedNumber) {
+              return this.prisma[key].create({ data: { ...obj, users: { connect: { email: rest.email } } } })
+            }
+          })
+
+          return attributeReq
+        }
+      })
+      const updateReq = await this.prisma.users.update({
         where: {
-          email: data.email
+          email: rest.email
         },
-        data
+        data: rest,
+        select: {
+          email: true,
+          imageURL: true,
+          name: true,
+          lastName: true,
+          birthDate: true,
+          rut: true,
+          phoneNumbers: true,
+          whatsAppNumbers: true
+        }
       })
 
-      return updateReq
+      return [updateReq]
     }
 }
 
