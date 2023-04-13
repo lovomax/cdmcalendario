@@ -1,10 +1,10 @@
 export interface User {
     name: string
     lastName: string
-    birthDate: Date
+    birthDate?: Date
     imageURL?: string
-    email: string
-    rut: string
+    email?: string
+    rut?: string
 }
 
 export interface UserResponse {
@@ -42,7 +42,7 @@ export interface Auth {
 export interface UserInformations extends User {
     phoneNumber: string
     whatsAppNumber: string
-    password: string
+    password?: string
 }
 
 export interface UserUpdateInformations extends User {
