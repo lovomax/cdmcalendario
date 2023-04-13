@@ -224,17 +224,17 @@ model Studies {
 
 model Users {
   id              String               @id @default(uuid()) 
-  email           String            @unique 
+  email           String?            
   imageURL        String? 
   name            String 
   lastName        String 
-  rut             String 
-  birthDate       DateTime          @db.Timestamptz(6) 
+  rut             String?            @unique
+  birthDate       DateTime?          @db.Timestamptz(6) 
   appointments    Appointments[]
   phoneNumbers    PhoneNumbers[]
   professionals   Professionals?
   whatsAppNumbers WhatsAppNumbers[]
-  auth            Auth @relation(fields: [authId], references: [id])
+  auth            Auth? @relation(fields: [authId], references: [id])
   authId          String @unique
 
   @@map("users")

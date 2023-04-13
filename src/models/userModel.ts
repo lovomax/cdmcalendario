@@ -14,10 +14,24 @@ class UserModel {
 
       return request
     }
-
+    private alphaNumericString (length) : string {
+      const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+      var retVal = ''
+      for (var i = 0, n = charset.length; i < length; ++i) {
+        retVal += charset.charAt(Math.floor(Math.random() * n))
+      }
+      return retVal
+    }
     public async store (data : UserInformations) : Promise<User | object> {
       const { phoneNumber, whatsAppNumber, password, ...rest } = data
-      const passHash = await hash(password, 10)
+      var passValue
+      if (password) {
+        passValue = this.alphaNumericString(8)
+      }
+      if (rest.rut) {
+        rest.rut = this.alphaNumericString(9)
+      }
+      const passHash = await hash(passValue, 10)
       const createReq = await this.prisma.users.create({
         data: { ...rest,
           phoneNumbers: {
@@ -51,16 +65,16 @@ class UserModel {
     }
 
     public async logIn (data: UserInformations) : Promise<Users> {
-      const { password, email } = data
+      const { password, rut } = data
       try {
         const userFinder = await this.prisma.users.findUnique({
           where: {
-            email: email
+            rut: rut
           }
         })
 
         if (!userFinder) {
-          throw new Error('Wrong email')
+          throw new Error('Wrong rut')
         }
 
         const passFinder = await this.prisma.auth.findUniqueOrThrow({
@@ -102,7 +116,7 @@ class UserModel {
       })
       const updateReq = await this.prisma.users.update({
         where: {
-          email: rest.email
+          rut: rest.rut
         },
         data: rest,
         select: {
