@@ -55,11 +55,11 @@ class ProfessionalModel {
               return { message: `Unathorized attempt to delete an entry` }
             } else {
               const objWithId = { ...obj, professionalId: professionalId }
-              const repeated = await this.prisma[key].findFirst({ where: { fieldId: objWithId.fieldId } })
-              if (repeated.length) {
+              const repeated = await this.prisma[key].findFirst({ where: { [Object.keys(obj)[0]]: objWithId[Object.keys(obj)[0]] } })
+              if (!repeated) {
                 return this.prisma[key].create({ data: { ...objWithId } })
               }
-              return { message: `Professional is already associated with that ${key} with the Id ${objWithId.fieldId}` }
+              return { message: `Professional is already associated with that ${key} with the Id ${objWithId[Object.keys(obj)[0]]}` }
             }
           })
 
