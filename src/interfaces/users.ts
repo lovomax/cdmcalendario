@@ -40,8 +40,8 @@ export interface Auth {
 }
 
 export interface UserInformations extends User {
-    phoneNumber: string
-    whatsAppNumber: string
+    phoneNumbers: string
+    whatsAppNumbers: string
     password?: string
 }
 
