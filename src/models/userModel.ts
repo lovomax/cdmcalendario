@@ -23,27 +23,19 @@ class UserModel {
       return retVal
     }
     public async store (data : UserInformations) : Promise<User | object> {
-      const { phoneNumber, whatsAppNumber, password, ...rest } = data
-      var passValue
-      if (password) {
+      const { phoneNumbers, whatsAppNumbers, password, ...rest } = data
+
+      var passValue = password
+      if (!password) {
         passValue = this.alphaNumericString(8)
       }
-      if (rest.rut) {
+      if (!(typeof rest.rut === 'string')) {
         rest.rut = this.alphaNumericString(9)
       }
+
       const passHash = await hash(passValue, 10)
       const createReq = await this.prisma.users.create({
         data: { ...rest,
-          phoneNumbers: {
-            create: {
-              number: phoneNumber
-            }
-          },
-          whatsAppNumbers: {
-            create: {
-              number: whatsAppNumber
-            }
-          },
           auth: {
             create: {
               password: passHash
@@ -61,7 +53,16 @@ class UserModel {
         }
       })
 
-      return createReq
+      const numbers : object[] = []
+      if (whatsAppNumbers || phoneNumbers) {
+        Object.entries({ whatsAppNumbers, phoneNumbers }).forEach(async ([key, value]) => {
+          if (value !== undefined) { numbers.push(this.prisma[key].create({ data: { userId: createReq.id, number: value } })) }
+        })
+      }
+
+      const promiseNumbers = await Promise.all(numbers)
+
+      return [createReq, promiseNumbers]
     }
 
     public async logIn (data: UserInformations) : Promise<Users> {
@@ -107,7 +108,7 @@ class UserModel {
             const repeatedNumber = await this.prisma[key].findFirst({ where: { number: obj.number } })
 
             if (!repeatedNumber) {
-              return this.prisma[key].create({ data: { ...obj, users: { connect: { email: rest.email } } } })
+              return this.prisma[key].create({ data: { ...obj, users: { connect: { rut: rest.rut } } } })
             }
           })
 
