@@ -25,6 +25,14 @@ class ScheduleService {
         return this.objResponse(FAILED, OK, err.message)
       }
     }
+    public async update (payload : ScheduleInformations) : Promise<ScheduleResponse> {
+      try {
+        const createReq = await scheduleModel.update(payload)
+        return this.objResponse(CREATED, OK, createReq)
+      } catch (err) {
+        return this.objResponse(FAILED, OK, err.message)
+      }
+    }
 }
 
 export default new ScheduleService()

@@ -20,5 +20,6 @@ routes.put('/update-professional', professionalController.update)
 routes.get('/get-professionals', professionalController.list)
 
 routes.post('/create-schedule', scheduleController.store)
+routes.post('/update-schedule', scheduleController.update)
 
 export default routes
