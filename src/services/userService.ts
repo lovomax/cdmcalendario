@@ -49,6 +49,15 @@ class UserService {
       }
     }
 
+    public async findUser (payload: UserInformations) : Promise<UserResponse> {
+      try {
+        const user = await userModel.findUser(payload)
+        return this.objResponse(CREATED, OK, user)
+      } catch (err) {
+        return this.objResponse(FAILED, OK, err)
+      }
+    }
+
     public async update (payload : UserUpdateInformations) : Promise<UserResponse> {
       try {
         const updateReq = await userModel.update(payload)

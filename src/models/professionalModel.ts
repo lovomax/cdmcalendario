@@ -76,6 +76,24 @@ class ProfessionalModel {
 
       return listReq
     }
+
+    public async listUser (data : ProfessionalUpdateInformations) : Promise<object> {
+      const listAppointmentReq = await this.prisma.appointments.findMany({ where: { professionalId: data.professionalId } })
+      const userListReq = listAppointmentReq.map((appointment) => this.prisma.users.findUnique({ where: { id: appointment.userId }, select: { name: true, lastName: true, imageURL: true, birthDate: true, appointments: { select: { date: true } } } }))
+
+      const promiseUserList = await Promise.all(userListReq)
+      return promiseUserList
+    }
+
+    public async getProfessional (data: ProfessionalInformations) : Promise<Professional | object> {
+      const findReq = await this.prisma.professionals.findUnique({ where: { userId: data.userId } })
+
+      if (!findReq) {
+        throw new Error("Couldn't find a user with that Rut")
+      }
+
+      return findReq
+    }
 }
 
 export default new ProfessionalModel()

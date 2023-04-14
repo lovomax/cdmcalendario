@@ -9,11 +9,6 @@ class UserModel {
       this.prisma = new PrismaClient()
     }
 
-    public async list () : Promise<User | object> {
-      const request = await this.prisma.users.findMany()
-
-      return request
-    }
     private alphaNumericString (length) : string {
       const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
       var retVal = ''
@@ -22,6 +17,23 @@ class UserModel {
       }
       return retVal
     }
+
+    public async list () : Promise<User | object> {
+      const request = await this.prisma.users.findMany()
+
+      return request
+    }
+
+    public async findUser (data: UserInformations) : Promise<User | object> {
+      const findReq = await this.prisma.users.findUnique({ where: { rut: data.rut } })
+
+      if (!findReq) {
+        throw new Error("Couldn't find a user with that Rut")
+      }
+
+      return findReq
+    }
+
     public async store (data : UserInformations) : Promise<User | object> {
       const { phoneNumbers, whatsAppNumbers, password, ...rest } = data
 
