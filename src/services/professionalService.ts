@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import { messages, status } from '../utils/httpResponses'
 import professionalModel from '../models/professionalModel'
-import { ProfessionalInformations, ProfessionalResponse, ProfessionalUpdateInformations } from '../interfaces/professionals'
+import { GetProfessional, ProfessionalInformations, ProfessionalResponse } from '../interfaces/professionals'
 
 const { OK } = messages
 const { FAILED, CREATED } = status
@@ -27,9 +27,9 @@ class ProfessionalService {
       }
     }
 
-    public async update (payload : ProfessionalUpdateInformations) : Promise<ProfessionalResponse> {
+    public async update (payload : ProfessionalInformations, id: GetProfessional) : Promise<ProfessionalResponse> {
       try {
-        const updateReq = await professionalModel.update(payload)
+        const updateReq = await professionalModel.update(payload, id)
 
         return this.objResponse(CREATED, OK, updateReq)
       } catch (err) {
@@ -47,7 +47,7 @@ class ProfessionalService {
       }
     }
 
-    public async getProfessional (payload : ProfessionalInformations) : Promise<ProfessionalResponse> {
+    public async getProfessional (payload : GetProfessional) : Promise<ProfessionalResponse> {
       try {
         const findReq = await professionalModel.getProfessional(payload)
 
@@ -57,9 +57,9 @@ class ProfessionalService {
       }
     }
 
-    public async listPatients (payload : ProfessionalUpdateInformations) : Promise<ProfessionalResponse> {
+    public async listPatients (payload : string) : Promise<ProfessionalResponse> {
       try {
-        const listReq = await professionalModel.listUser(payload)
+        const listReq = await professionalModel.listPatients(payload)
 
         return this.objResponse(CREATED, OK, listReq)
       } catch (err) {

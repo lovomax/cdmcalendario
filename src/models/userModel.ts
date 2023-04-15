@@ -111,7 +111,7 @@ class UserModel {
     public async update (data: UserUpdateInformations) : Promise<User | object> {
       const { whatsAppNumbers, phoneNumbers, id, ...rest } = data
 
-      Object.entries({ whatsAppNumbers, phoneNumbers }).map(([key, value]) => {
+      const numberUpdateReq = Object.entries({ whatsAppNumbers, phoneNumbers }).map(([key, value]) => {
         if (value !== undefined && value.length) {
           const attributeReq = value.map(async (obj) => {
             if (obj.id) {
@@ -127,6 +127,7 @@ class UserModel {
           return attributeReq
         }
       })
+      await Promise.all(numberUpdateReq)
       const updateReq = await this.prisma.users.update({
         where: {
           id: id

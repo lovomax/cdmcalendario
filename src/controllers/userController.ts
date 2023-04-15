@@ -19,15 +19,15 @@ class UserController {
     return res.status(httpStatus[service.status]).json(service)
   }
   public async getUser (req: Request, res: Response) : Promise<Response> {
-    const { body } = req
     const userId = req.params.id
-    const bodyReq = { ...body, id: userId }
-    const service = await UserService.getUser(bodyReq)
+    const service = await UserService.getUser({ id: userId })
     return res.status(httpStatus[service.status]).json(service)
   }
   public async update (req: Request, res: Response) : Promise<Response> {
+    const { body } = req
     const userId = req.params.id
-    const service = await UserService.update(userId)
+    const bodyReq = { ...body, id: userId }
+    const service = await UserService.update(bodyReq)
     return res.status(httpStatus[service.status]).json(service)
   }
 }
