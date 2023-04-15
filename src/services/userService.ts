@@ -5,7 +5,7 @@ import userModel from '../models/userModel'
 import jwt, { Secret } from 'jsonwebtoken'
 
 const { OK } = messages
-const { FAILED, CREATED } = status
+const { FAILED, CREATED, DONE } = status
 const SECRET_KEY : Secret = process.env.SECRET_KEY as string
 
 class UserService {
@@ -32,9 +32,9 @@ class UserService {
       try {
         const foundUser = await userModel.logIn(payload)
 
-        const token = jwt.sign({ id: foundUser, email: foundUser.email }, SECRET_KEY, { expiresIn: '4 days' })
+        const token = jwt.sign({ id: foundUser, rut: foundUser.rut }, SECRET_KEY, { expiresIn: '4 days' })
 
-        return this.objResponse(CREATED, OK, { user: { ...foundUser }, token: token })
+        return this.objResponse(DONE, OK, { user: { ...foundUser }, token: token })
       } catch (err) {
         return this.objResponse(FAILED, OK, err)
       }
@@ -43,7 +43,7 @@ class UserService {
     public async list () : Promise<UserResponse> {
       try {
         const userList = await userModel.list()
-        return this.objResponse(CREATED, OK, userList)
+        return this.objResponse(DONE, OK, userList)
       } catch (err) {
         return this.objResponse(FAILED, OK, err)
       }
@@ -52,7 +52,7 @@ class UserService {
     public async getUser (payload: GetUser) : Promise<UserResponse> {
       try {
         const user = await userModel.getUser(payload)
-        return this.objResponse(CREATED, OK, user)
+        return this.objResponse(DONE, OK, user)
       } catch (err) {
         return this.objResponse(FAILED, OK, err)
       }

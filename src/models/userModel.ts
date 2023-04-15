@@ -83,6 +83,20 @@ class UserModel {
         const userFinder = await this.prisma.users.findUnique({
           where: {
             rut: rut
+          },
+          include: {
+            professionals: {
+              include: {
+                studies: true,
+                appointments: true,
+                professionalFields: true,
+                professionalForecasts: true,
+                professionalInterventions: true,
+                professionalModalities: true,
+                professionalPaymentMethods: true,
+                professionalSpecialties: true
+              }
+            }
           }
         })
 

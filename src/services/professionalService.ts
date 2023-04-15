@@ -4,7 +4,7 @@ import professionalModel from '../models/professionalModel'
 import { GetProfessional, ProfessionalInformations, ProfessionalResponse } from '../interfaces/professionals'
 
 const { OK } = messages
-const { FAILED, CREATED } = status
+const { FAILED, CREATED, DONE } = status
 
 class ProfessionalService {
     private prisma : PrismaClient
@@ -41,7 +41,7 @@ class ProfessionalService {
       try {
         const listReq = await professionalModel.list()
 
-        return this.objResponse(CREATED, OK, listReq)
+        return this.objResponse(DONE, OK, listReq)
       } catch (err) {
         return this.objResponse(FAILED, OK, err)
       }
@@ -51,7 +51,7 @@ class ProfessionalService {
       try {
         const findReq = await professionalModel.getProfessional(payload)
 
-        return this.objResponse(CREATED, OK, findReq)
+        return this.objResponse(DONE, OK, findReq)
       } catch (err) {
         return this.objResponse(FAILED, OK, err)
       }
@@ -61,7 +61,7 @@ class ProfessionalService {
       try {
         const listReq = await professionalModel.listPatients(payload)
 
-        return this.objResponse(CREATED, OK, listReq)
+        return this.objResponse(DONE, OK, listReq)
       } catch (err) {
         return this.objResponse(FAILED, OK, err)
       }
