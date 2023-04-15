@@ -75,7 +75,7 @@ export interface ProfessionalResponse {
 }
 
 export interface ProfessionalInformations extends Professional {
-    study: Study
+    study: Study[]
     professionalFields: ProfessionalFields[]
     professionalForecasts: ProfessionalForecasts[]
     professionalInterventions: ProfessionalInterventions[]
@@ -84,13 +84,6 @@ export interface ProfessionalInformations extends Professional {
     professionalSpecialties: ProfessionalSpecialties[]
 }
 
-export interface ProfessionalUpdateInformations{
-    professionalId: string
-    study: Study[]
-    professionalFields: ProfessionalFields[]
-    professionalForecasts: ProfessionalForecasts[]
-    professionalInterventions: ProfessionalInterventions[]
-    professionalModalities: ProfessionalModalities[]
-    professionalPaymentMethods: ProfessionalPaymentMethods[]
-    professionalSpecialties: ProfessionalSpecialties[]
+export interface GetProfessional {
+    id: string
 }

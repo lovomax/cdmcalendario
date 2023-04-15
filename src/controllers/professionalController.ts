@@ -10,7 +10,8 @@ class ProfessionalController {
   }
   public async update (req: Request, res: Response) : Promise<Response> {
     const { body } = req
-    const service = await professionalService.update(body)
+    const userId = { id: req.params.id }
+    const service = await professionalService.update(body, userId)
     return res.status(httpStatus[service.status]).json(service)
   }
   public async list (req: Request, res: Response) : Promise<Response> {
@@ -18,8 +19,8 @@ class ProfessionalController {
     return res.status(httpStatus[service.status]).json(service)
   }
   public async getProfessional (req: Request, res: Response) : Promise<Response> {
-    const { body } = req
-    const service = await professionalService.getProfessional(body)
+    const professionalId = { id: req.params.id }
+    const service = await professionalService.getProfessional(professionalId)
     return res.status(httpStatus[service.status]).json(service)
   }
   public async listPatients (req: Request, res: Response) : Promise<Response> {

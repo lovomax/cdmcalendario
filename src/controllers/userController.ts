@@ -18,14 +18,16 @@ class UserController {
 
     return res.status(httpStatus[service.status]).json(service)
   }
-  public async findUser (req: Request, res: Response) : Promise<Response> {
-    const { body } = req
-    const service = await UserService.findUser(body)
+  public async getUser (req: Request, res: Response) : Promise<Response> {
+    const userId = req.params.id
+    const service = await UserService.getUser({ id: userId })
     return res.status(httpStatus[service.status]).json(service)
   }
   public async update (req: Request, res: Response) : Promise<Response> {
     const { body } = req
-    const service = await UserService.update(body)
+    const userId = req.params.id
+    const bodyReq = { ...body, id: userId }
+    const service = await UserService.update(bodyReq)
     return res.status(httpStatus[service.status]).json(service)
   }
 }

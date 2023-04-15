@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { UserInformations, UserResponse, UserUpdateInformations } from '../interfaces/users'
+import { GetUser, UserInformations, UserResponse, UserUpdateInformations } from '../interfaces/users'
 import { messages, status } from '../utils/httpResponses'
 import userModel from '../models/userModel'
 import jwt, { Secret } from 'jsonwebtoken'
@@ -49,9 +49,9 @@ class UserService {
       }
     }
 
-    public async findUser (payload: UserInformations) : Promise<UserResponse> {
+    public async getUser (payload: GetUser) : Promise<UserResponse> {
       try {
-        const user = await userModel.findUser(payload)
+        const user = await userModel.getUser(payload)
         return this.objResponse(CREATED, OK, user)
       } catch (err) {
         return this.objResponse(FAILED, OK, err)
@@ -61,7 +61,6 @@ class UserService {
     public async update (payload : UserUpdateInformations) : Promise<UserResponse> {
       try {
         const updateReq = await userModel.update(payload)
-
         return this.objResponse(CREATED, OK, updateReq)
       } catch (err) {
         return this.objResponse(FAILED, OK, err)
