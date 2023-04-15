@@ -1,6 +1,6 @@
 import { PrismaClient, Users } from '@prisma/client'
 import { hash, compareSync } from 'bcrypt'
-import { User, UserInformations, UserUpdateInformations } from '../interfaces/users'
+import { GetUser, User, UserInformations, UserUpdateInformations } from '../interfaces/users'
 
 class UserModel {
     private prisma : PrismaClient
@@ -24,8 +24,8 @@ class UserModel {
       return request
     }
 
-    public async findUser (data: UserInformations) : Promise<User | object> {
-      const findReq = await this.prisma.users.findUnique({ where: { rut: data.rut } })
+    public async getUser (data: GetUser) : Promise<User | object> {
+      const findReq = await this.prisma.users.findUnique({ where: { id: data.id } })
 
       if (!findReq) {
         throw new Error("Couldn't find a user with that Rut")
@@ -109,7 +109,7 @@ class UserModel {
     }
 
     public async update (data: UserUpdateInformations) : Promise<User | object> {
-      const { whatsAppNumbers, phoneNumbers, ...rest } = data
+      const { whatsAppNumbers, phoneNumbers, id, ...rest } = data
 
       Object.entries({ whatsAppNumbers, phoneNumbers }).map(([key, value]) => {
         if (value !== undefined && value.length) {
@@ -120,7 +120,7 @@ class UserModel {
             const repeatedNumber = await this.prisma[key].findFirst({ where: { number: obj.number } })
 
             if (!repeatedNumber) {
-              return this.prisma[key].create({ data: { ...obj, users: { connect: { rut: rest.rut } } } })
+              return this.prisma[key].create({ data: { ...obj, users: { connect: { id: id } } } })
             }
           })
 
@@ -129,10 +129,11 @@ class UserModel {
       })
       const updateReq = await this.prisma.users.update({
         where: {
-          rut: rest.rut
+          id: id
         },
         data: rest,
         select: {
+          id: true,
           email: true,
           imageURL: true,
           name: true,
