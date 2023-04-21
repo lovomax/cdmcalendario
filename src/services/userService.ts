@@ -63,6 +63,7 @@ class UserService {
         const updateReq = await userModel.update(payload)
         return this.objResponse(CREATED, OK, updateReq)
       } catch (err) {
+        console.log(err)
         return this.objResponse(FAILED, OK, err)
       }
     }

@@ -9,7 +9,7 @@ class ProfessionalModel {
     }
 
     public async store (data : ProfessionalInformations) : Promise<Professional | object> {
-      const { study, userId, ...rest } = data
+      const { studies: study, userId, ...rest } = data
       try {
         const createReq = await this.prisma.professionals.create({
           data: {
@@ -43,33 +43,56 @@ class ProfessionalModel {
 
     public async update (data : ProfessionalInformations, idInformation : GetProfessional) : Promise<ProfessionalInformations| object> {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { userId, ...rest } = data
+      const { userId, studies, ...rest } = data
 
-      const updateReq = Object.entries(rest).map(([key, value]) => {
+      const updateReq = Object.entries(rest).map(async ([key, value]) => {
         if (value) {
           const arrayAttribute = value.map(async (obj) => {
             if (obj.id) {
               const sameProfessional = await this.prisma[key].findFirst({ where: { id: obj.id } })
-              if (sameProfessional.professionalId === idInformation.id) {
-                return this.prisma[key].delete({ where: { id: obj.id } })
+              if (sameProfessional) {
+                if (sameProfessional.professionalId === idInformation.id) {
+                  return this.prisma[key].delete({ where: { id: obj.id } })
+                }
               }
-              return { message: `Unathorized attempt to delete an entry` }
             } else {
               const objWithId = { ...obj, professionalId: idInformation.id }
-              const repeated = await this.prisma[key].findFirst({ where: { [Object.keys(obj)[0]]: objWithId[Object.keys(obj)[0]] } })
+              const repeated = await this.prisma[key].findFirst({ where: { [Object.keys(obj)[0]]: objWithId[Object.keys(obj)[0]], AND: { professionalId: idInformation.id } } })
               if (!repeated) {
                 return this.prisma[key].create({ data: { ...objWithId } })
+              } else {
+                return this.prisma[key].delete({ where: { id: repeated.id } })
               }
-              return { message: `Professional is already associated with that ${key} with the Id ${objWithId[Object.keys(obj)[0]]}` }
+              /*               return { message: `Professional is already associated with that ${key} with the Id ${objWithId[Object.keys(obj)[0]]}` } */
             }
           })
 
-          return arrayAttribute
+          const promiseAttribute = await Promise.all(arrayAttribute)
+          return { [key]: [...promiseAttribute] }
         }
-      }).flat().filter((element) => element !== undefined)
+      })
 
-      const arrayPromise = await Promise.all(updateReq)
-      return arrayPromise
+      const studyObj : object[] = []
+
+      if (studies !== undefined && studies.length > 0) {
+        const sameProfessional = await this.prisma.studies.findFirst({ where: { professionalId: idInformation.id } })
+
+        if (sameProfessional) {
+          studyObj.push(await this.prisma.studies.update({ where: { id: sameProfessional.id }, data: { ...studies[0] } }))
+        } else {
+          studyObj.push(await this.prisma.studies.create({ data: { ...studies[0], professionalId: idInformation.id } }))
+        }
+      }
+      const promiseResolve = await Promise.all(updateReq)
+      console.log(promiseResolve)
+      promiseResolve.push({ studies: studyObj })
+      /*       let orderedRequest : object = {}
+      promiseResolve.map((item) => {
+        if (item) { Object.entries(item).map(([key, values]) => { orderedRequest[key] = values }) }
+      }) */
+      const orderedRequest = await this.getProfessional({ id: idInformation.id })
+
+      return { ...orderedRequest }
     }
 
     public async list () : Promise<ProfessionalInformations | object> {
@@ -78,8 +101,8 @@ class ProfessionalModel {
       return listReq
     }
 
-    public async listPatients (id : string) : Promise<object> {
-      const listAppointmentReq = await this.prisma.appointments.findMany({ where: { professionalId: id } })
+    public async listPatients (data : GetProfessional) : Promise<object> {
+      const listAppointmentReq = await this.prisma.appointments.findMany({ where: { professionalId: data.id } })
       const userListReq = listAppointmentReq.map((appointment) => this.prisma.users.findUnique({ where: { id: appointment.userId }, select: { name: true, lastName: true, imageURL: true, birthDate: true, appointments: { select: { date: true } } } }))
 
       const promiseUserList = await Promise.all(userListReq)
@@ -102,14 +125,14 @@ class ProfessionalModel {
               whatsAppNumbers: true
             }
           },
-          studies: { select: { title: true } },
+          studies: true,
           appointments: true,
-          professionalFields: { select: { fieldId: true } },
-          professionalForecasts: { select: { forecastId: true } },
-          professionalInterventions: { select: { interventionId: true } },
-          professionalModalities: { select: { modalityId: true } },
-          professionalPaymentMethods: { select: { paymentMethodId: true } },
-          professionalSpecialties: { select: { specialtyId: true } }
+          professionalFields: true,
+          professionalForecasts: true,
+          professionalInterventions: true,
+          professionalModalities: true,
+          professionalPaymentMethods: true,
+          professionalSpecialties: true
         }
       })
 
