@@ -24,8 +24,7 @@ class ProfessionalController {
     return res.status(httpStatus[service.status]).json(service)
   }
   public async listPatients (req: Request, res: Response) : Promise<Response> {
-    const { body } = req
-    const service = await professionalService.listPatients(body)
+    const service = await professionalService.listPatients({ id: req.params.id })
     return res.status(httpStatus[service.status]).json(service)
   }
 }

@@ -21,12 +21,13 @@ routes.post('/sign-professional', verifyToken, professionalController.store)
 routes.put('/update-professional/:id', professionalController.update)
 routes.get('/get-professionals', professionalController.list)
 routes.get('/get-professional/:id', professionalController.getProfessional)
-routes.get('/get-patients', professionalController.listPatients)
+routes.get('/get-patients/:id', professionalController.listPatients)
 
-routes.post('/create-schedule', scheduleController.store)
-routes.put('/update-schedule', scheduleController.update)
+routes.get('/get-schedules/:id', scheduleController.list)
+routes.post('/create-schedule/:id', scheduleController.store)
+routes.put('/update-schedule/:id', scheduleController.update)
 
-routes.post('/create-appointment', appointmentController.store)
+routes.post('/create-appointment/:id', appointmentController.store)
 routes.put('/update-appointment', appointmentController.update)
 routes.delete('/delete-appointment', appointmentController.delete)
 

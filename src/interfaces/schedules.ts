@@ -45,3 +45,7 @@ export interface ScheduleResponse {
     message: string
     data: object
 }
+
+export interface GetSchedule {
+    professionalId: string
+}

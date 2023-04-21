@@ -7,37 +7,37 @@ export interface Study {
 export interface ProfessionalFields{
     id: number
     professionalId: string
-    fieldId: number
+    specializedId: number
 }
 
 export interface ProfessionalForecasts{
     id: number
     professionalId: string
-    forecastId: number
+    specializedId: number
 }
 
 export interface ProfessionalInterventions{
     id: number
     professionalId: string
-    interventionId: number
+    specializedId: number
 }
 
 export interface ProfessionalModalities{
     id: number
     professionalId: string
-    modalityId: number
+    specializedId: number
 }
 
 export interface ProfessionalPaymentMethods{
     id: number
     professionalId: string
-    paymentMethodId: number
+    specializedId: number
 }
 
 export interface ProfessionalSpecialties{
     id: number
     professionalId: string
-    specialtyId: number
+    specializedId: number
 }
 
 export interface Field{
@@ -75,7 +75,7 @@ export interface ProfessionalResponse {
 }
 
 export interface ProfessionalInformations extends Professional {
-    study: Study[]
+    studies: Study[]
     professionalFields: ProfessionalFields[]
     professionalForecasts: ProfessionalForecasts[]
     professionalInterventions: ProfessionalInterventions[]

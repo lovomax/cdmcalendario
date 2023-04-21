@@ -27,11 +27,14 @@ class UserModel {
     public async getUser (data: GetUser) : Promise<User | object> {
       const findReq = await this.prisma.users.findUnique({ where: { id: data.id } })
 
+      const phoneNumber = await this.prisma.phoneNumbers.findFirst({ where: { userId: data.id } })
+      const whatsAppNumber = await this.prisma.whatsAppNumbers.findFirst({ where: { userId: data.id } })
+
       if (!findReq) {
         throw new Error("Couldn't find a user with that Rut")
       }
 
-      return findReq
+      return { ...findReq, phoneNumber, whatsAppNumber }
     }
 
     public async store (data : UserInformations) : Promise<User | object> {
@@ -96,7 +99,9 @@ class UserModel {
                 professionalPaymentMethods: true,
                 professionalSpecialties: true
               }
-            }
+            },
+            phoneNumbers: true,
+            whatsAppNumbers: true
           }
         })
 
@@ -125,42 +130,58 @@ class UserModel {
     public async update (data: UserUpdateInformations) : Promise<User | object> {
       const { whatsAppNumbers, phoneNumbers, id, ...rest } = data
 
-      const numberUpdateReq = Object.entries({ whatsAppNumbers, phoneNumbers }).map(([key, value]) => {
-        if (value !== undefined && value.length) {
-          const attributeReq = value.map(async (obj) => {
-            if (obj.id) {
-              return this.prisma[key].update({ where: { id: obj.id }, data: { ...obj } })
-            }
-            const repeatedNumber = await this.prisma[key].findFirst({ where: { number: obj.number } })
+      try {
+        const numberUpdateReq = Object.entries({ whatsAppNumbers, phoneNumbers }).map(([key, value]) => {
+          if (value !== undefined) {
+            const attributeReq = value.map(async (obj) => {
+              const repeatedNumber = await this.prisma[key].findFirst({ where: { id: obj.id, AND: { userId: id } } })
 
-            if (!repeatedNumber) {
-              return this.prisma[key].create({ data: { ...obj, users: { connect: { id: id } } } })
-            }
-          })
+              if (repeatedNumber) {
+                return this.prisma[key].update({ where: { id: repeatedNumber.id }, data: { ...obj }, select: { id: true, number: true, roleOfNumber: true, userId: true } })
+              } else {
+                return this.prisma[key].create({ data: { number: obj.number, roleOfNumber: obj.roleOfNumber, users: { connect: { id: id } } } })
+              }
+            })
 
-          return attributeReq
-        }
-      })
-      await Promise.all(numberUpdateReq)
-      const updateReq = await this.prisma.users.update({
-        where: {
-          id: id
-        },
-        data: rest,
-        select: {
-          id: true,
-          email: true,
-          imageURL: true,
-          name: true,
-          lastName: true,
-          birthDate: true,
-          rut: true,
-          phoneNumbers: true,
-          whatsAppNumbers: true
-        }
-      })
+            return attributeReq
+          }
+        }).filter((item) => item).flat(Infinity)
 
-      return [updateReq]
+        const promiseResolve = await Promise.all(numberUpdateReq)
+
+        const jointNumberObj : {whatsAppNumbers: object[], phoneNumbers: object[]} = { whatsAppNumbers: [], phoneNumbers: [] }
+
+        Object.values(promiseResolve).forEach((item, index) => {
+          const numberInLength = index < whatsAppNumbers.length
+          if (numberInLength) {
+            jointNumberObj.whatsAppNumbers.push(item)
+          } else {
+            jointNumberObj.phoneNumbers.push(item)
+          }
+        })
+
+        const updateReq = await this.prisma.users.update({
+          where: {
+            id: id
+          },
+          data: rest,
+          select: {
+            id: true,
+            email: true,
+            imageURL: true,
+            name: true,
+            lastName: true,
+            birthDate: true,
+            rut: true,
+            phoneNumbers: true,
+            whatsAppNumbers: true
+          }
+        })
+
+        return { ...updateReq }
+      } catch (err) {
+        throw new Error(err)
+      }
     }
 }
 

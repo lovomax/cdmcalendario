@@ -1,10 +1,10 @@
 import { PrismaClient } from '@prisma/client'
 import { messages, status } from '../utils/httpResponses'
 import scheduleModel from '../models/scheduleModel'
-import { ScheduleInformations, ScheduleResponse } from '../interfaces/schedules'
+import { GetSchedule, ScheduleInformations, ScheduleResponse } from '../interfaces/schedules'
 
 const { OK } = messages
-const { FAILED, CREATED } = status
+const { FAILED, CREATED, DONE } = status
 
 class ScheduleService {
     private prisma : PrismaClient
@@ -15,6 +15,15 @@ class ScheduleService {
 
     private objResponse (status: string, message: string, data: object) : ScheduleResponse {
       return { status, message, data }
+    }
+
+    public async list (payload : GetSchedule) : Promise<ScheduleResponse> {
+      try {
+        const createReq = await scheduleModel.list(payload)
+        return this.objResponse(DONE, OK, createReq)
+      } catch (err) {
+        return this.objResponse(FAILED, OK, err.message)
+      }
     }
 
     public async store (payload : ScheduleInformations) : Promise<ScheduleResponse> {

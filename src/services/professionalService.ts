@@ -33,6 +33,7 @@ class ProfessionalService {
 
         return this.objResponse(CREATED, OK, updateReq)
       } catch (err) {
+        console.log(err)
         return this.objResponse(FAILED, OK, err)
       }
     }
@@ -57,12 +58,13 @@ class ProfessionalService {
       }
     }
 
-    public async listPatients (payload : string) : Promise<ProfessionalResponse> {
+    public async listPatients (payload : GetProfessional) : Promise<ProfessionalResponse> {
       try {
         const listReq = await professionalModel.listPatients(payload)
 
         return this.objResponse(DONE, OK, listReq)
       } catch (err) {
+        console.log(err)
         return this.objResponse(FAILED, OK, err)
       }
     }

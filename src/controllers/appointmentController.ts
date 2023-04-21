@@ -5,7 +5,8 @@ import appointmentService from '../services/appointmentService'
 class AppointmentController {
   public async store (req: Request, res: Response) : Promise<Response> {
     const { body } = req
-    const service = await appointmentService.store(body)
+    const params = { professionalId: req.params.id }
+    const service = await appointmentService.store({ ...body, professionalId: params.professionalId })
     return res.status(httpStatus[service.status]).json(service)
   }
 
