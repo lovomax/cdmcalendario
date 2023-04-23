@@ -17,13 +17,15 @@ routes.put('/update-user/:id', userController.update)
 routes.get('/list', verifyToken, userController.list)
 routes.get('/get-user/:id', userController.getUser)
 
-routes.post('/sign-professional', verifyToken, professionalController.store)
+routes.post('/sign-professional/:id', verifyToken, professionalController.store)
 routes.put('/update-professional/:id', professionalController.update)
 routes.get('/get-professionals', professionalController.list)
 routes.get('/get-professional/:id', professionalController.getProfessional)
 routes.get('/get-patients/:id', professionalController.listPatients)
 
-routes.get('/get-schedules/:id', scheduleController.list)
+routes.get('/get-all-schedules/:id', scheduleController.listAllSchedules)
+routes.post('/get-schedules/:id', scheduleController.list)
+routes.post('/get-special-hours/', scheduleController.listSpecialHour)
 routes.post('/create-schedule/:id', scheduleController.store)
 routes.put('/update-schedule/:id', scheduleController.update)
 

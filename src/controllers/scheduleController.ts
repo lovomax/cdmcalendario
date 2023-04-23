@@ -4,8 +4,22 @@ import { httpStatus } from '../utils/httpStatus'
 
 class ScheduleController {
   public async list (req: Request, res: Response) : Promise<Response> {
-    const professionalId = { professionalId: req.params.id }
-    const service = await ScheduleService.list(professionalId)
+    const { body } = req
+    const params = { professionalId: req.params.id }
+
+    const service = await ScheduleService.list({ ...body, professionalId: params.professionalId })
+    return res.status(httpStatus[service.status]).json(service)
+  }
+  public async listSpecialHour (req: Request, res: Response) : Promise<Response> {
+    const { body } = req
+    const service = await ScheduleService.listSpecialHour({ ...body })
+    return res.status(httpStatus[service.status]).json(service)
+  }
+
+  public async listAllSchedules (req: Request, res: Response) : Promise<Response> {
+    const params = { professionalId: req.params.id }
+
+    const service = await ScheduleService.listAllSchedules({ professionalId: params.professionalId, monthDate: new Date() })
     return res.status(httpStatus[service.status]).json(service)
   }
   public async store (req: Request, res: Response) : Promise<Response> {
