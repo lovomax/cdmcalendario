@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { GetProfessional, Professional, ProfessionalInformations } from '../interfaces/professionals'
+import { GetProfessional, Professional, ProfessionalInformations, Study } from '../interfaces/professionals'
 
 class ProfessionalModel {
     private prisma : PrismaClient
@@ -11,12 +11,13 @@ class ProfessionalModel {
     public async store (data : ProfessionalInformations) : Promise<Professional | object> {
       const { studies: study, userId, ...rest } = data
       try {
+        const justOneStudy : Study = study[0]
         const createReq = await this.prisma.professionals.create({
           data: {
             userId,
             studies: {
               create: {
-                ...study
+                ...justOneStudy
               }
             }
           }
@@ -35,8 +36,10 @@ class ProfessionalModel {
           }
         })
 
-        return { ...createReq }
+        const findReq = await this.getProfessional({ id: createReq.id })
+        return { ...findReq }
       } catch (err) {
+        console.log(err)
         throw new Error('Something failed while registering a new professional')
       }
     }
@@ -63,7 +66,6 @@ class ProfessionalModel {
               } else {
                 return this.prisma[key].delete({ where: { id: repeated.id } })
               }
-              /*               return { message: `Professional is already associated with that ${key} with the Id ${objWithId[Object.keys(obj)[0]]}` } */
             }
           })
 
@@ -84,12 +86,9 @@ class ProfessionalModel {
         }
       }
       const promiseResolve = await Promise.all(updateReq)
-      console.log(promiseResolve)
+
       promiseResolve.push({ studies: studyObj })
-      /*       let orderedRequest : object = {}
-      promiseResolve.map((item) => {
-        if (item) { Object.entries(item).map(([key, values]) => { orderedRequest[key] = values }) }
-      }) */
+
       const orderedRequest = await this.getProfessional({ id: idInformation.id })
 
       return { ...orderedRequest }

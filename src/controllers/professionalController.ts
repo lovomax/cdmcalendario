@@ -5,7 +5,8 @@ import professionalService from '../services/professionalService'
 class ProfessionalController {
   public async store (req: Request, res: Response) : Promise<Response> {
     const { body } = req
-    const service = await professionalService.store(body)
+    const params = { id: req.params.id }
+    const service = await professionalService.store({ ...body, userId: params.id })
     return res.status(httpStatus[service.status]).json(service)
   }
   public async update (req: Request, res: Response) : Promise<Response> {

@@ -36,7 +36,6 @@ export interface ScheduleInformations extends Schedules {
 
 export interface Appointments {
     professionalId: string
-    userId: string
     date: Date
 }
 
@@ -48,4 +47,10 @@ export interface ScheduleResponse {
 
 export interface GetSchedule {
     professionalId: string
+    monthDate: Date
+}
+
+export interface GetSpecialHour {
+    appointments: Appointments[]
+    schedule: SpecialSchedules
 }
