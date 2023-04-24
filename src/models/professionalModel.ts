@@ -102,7 +102,8 @@ class ProfessionalModel {
 
     public async listPatients (data : GetProfessional) : Promise<object> {
       const listAppointmentReq = await this.prisma.appointments.findMany({ where: { professionalId: data.id } })
-      const userListReq = listAppointmentReq.map((appointment) => this.prisma.users.findUnique({ where: { id: appointment.userId }, select: { name: true, lastName: true, imageURL: true, birthDate: true, appointments: { select: { date: true } } } }))
+      const filteredAppointments = listAppointmentReq.filter((item, index) => !listAppointmentReq.slice(index + 1).some(nextItem => nextItem.userId === item.userId))
+      const userListReq = filteredAppointments.map((appointment) => this.prisma.users.findUnique({ where: { id: appointment.userId }, select: { name: true, lastName: true, imageURL: true, birthDate: true, appointments: { select: { date: true } } } }))
 
       const promiseUserList = await Promise.all(userListReq)
       return promiseUserList

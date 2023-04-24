@@ -26,7 +26,7 @@ class AppointmentModel {
       } else {
         const userCreateReq = await userModel.store(userPayload)
         if (userCreateReq[0].id) {
-          const createAppointmentReq = await this.prisma.appointments.create({ data: { ...data, userId: userCreateReq[0].id } })
+          const createAppointmentReq = await this.prisma.appointments.create({ data: { professionalId: data.professionalId, date: new Date(data.date), userId: userCreateReq[0].id } })
           return createAppointmentReq
         }
       }
