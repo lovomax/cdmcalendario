@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { Appointments, GetSchedule, GetSpecialHour, ScheduleInformations, Schedules, SpecialSchedules } from '../interfaces/schedules'
+import { Appointments, GetSchedule, GetSpecialHour, ScheduleForm, ScheduleInformations, Schedules, SpecialSchedules } from '../interfaces/schedules'
 
 class ScheduleModel {
     private prisma : PrismaClient
@@ -96,6 +96,24 @@ class ScheduleModel {
       })
 
       return { ...listReq }
+    }
+
+    public async createSchedule (data : ScheduleForm) : Promise <Schedules | object> {
+      const filteredSchedule = data.schedules.filter((item) => item.dayOfWeek <= 7 && item.dayOfWeek > 0)
+      const createReq = await this.prisma.schedules.createMany({ data: { ...filteredSchedule, professionalId: data.professionalId } })
+
+      return createReq
+    }
+
+    public async updateSchedule (data : ScheduleForm) : Promise <Schedules | object> {
+      const filteredSchedule = data.schedules.filter((item) => item.dayOfWeek <= 7 && item.dayOfWeek > 0)
+
+      const updateReq = filteredSchedule.map((item) =>
+        this.prisma.schedules.update({ where: { id: item.id }, data: { ...item } })
+      )
+
+      const promiseResolve = await Promise.all(updateReq)
+      return promiseResolve
     }
 
     public async store (data : ScheduleInformations) : Promise<Schedules | object> {

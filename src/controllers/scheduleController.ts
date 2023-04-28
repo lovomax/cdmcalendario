@@ -22,6 +22,20 @@ class ScheduleController {
     const service = await ScheduleService.listAllSchedules({ professionalId: params.professionalId, monthDate: new Date() })
     return res.status(httpStatus[service.status]).json(service)
   }
+
+  public async createSchedule (req: Request, res: Response) : Promise<Response> {
+    const { body } = req
+    const params = { professionalId: req.params.id }
+    const service = await ScheduleService.createSchedule({ ...body, professionalId: params.professionalId })
+    return res.status(httpStatus[service.status]).json(service)
+  }
+
+  public async updateSchedule (req: Request, res: Response) : Promise<Response> {
+    const { body } = req
+    const params = { professionalId: req.params.id }
+    const service = await ScheduleService.updateSchedule({ ...body, professionalId: params.professionalId })
+    return res.status(httpStatus[service.status]).json(service)
+  }
   public async store (req: Request, res: Response) : Promise<Response> {
     const { body } = req
     const params = { professionalId: req.params.id }
