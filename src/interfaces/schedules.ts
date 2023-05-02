@@ -5,6 +5,7 @@ export interface Schedules {
     scheduleEnd: Date
     restStart: Date
     restEnd: Date
+    dayOfWeek: number
 }
 
 export interface RestDays {
@@ -32,6 +33,11 @@ export interface ScheduleInformations extends Schedules {
     restDays: RestDays[]
     specialDays: SpecialDays
     specialSchedules: SpecialSchedules
+}
+
+export interface ScheduleForm {
+    schedules: Schedules[]
+    professionalId: string
 }
 
 export interface Appointments {

@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { Appointments, GetSchedule, GetSpecialHour, ScheduleInformations, Schedules, SpecialSchedules } from '../interfaces/schedules'
+import { Appointments, GetSchedule, GetSpecialHour, ScheduleForm, ScheduleInformations, Schedules, SpecialSchedules } from '../interfaces/schedules'
 
 class ScheduleModel {
     private prisma : PrismaClient
@@ -12,6 +12,7 @@ class ScheduleModel {
       const { schedule, appointments } = data
       const availableHours : Date[] = []
       const busyHours : Date[] = []
+
       if (schedule) {
         const professionalSession = 60
         for (let index = 0; index < 2; index++) {
@@ -24,14 +25,14 @@ class ScheduleModel {
             if (busyHour.length) {
               busyHours.push(...busyHour)
             }
-            currentHour < finalHour && availableMinutes >= professionalSession && availableHours.push(new Date(initialHour.toISOString()))
-
+            if (currentHour < finalHour && availableMinutes >= professionalSession) {
+              availableHours.push(new Date(initialHour.toISOString()))
+            }
             initialHour.setMinutes(initialHour.getMinutes() + professionalSession)
             // eslint-disable-next-line no-unmodified-loop-condition
           } while (initialHour < finalHour)
         }
       }
-
       return { availableHours, busyHours }
     }
     public async list (data : GetSchedule) : Promise<Schedules | object> {
@@ -55,19 +56,17 @@ class ScheduleModel {
                 gte: new Date(monthDate.getFullYear(), monthDate.getMonth())
               }
             },
-            select: { specialSchedules: true } }
+            select: { date: true, specialSchedules: true } }
         }
       })
 
-      const availableHours : object | 0 | null = (listReq && listReq.schedules.length) && this.listWorkingHour({ schedule: listReq.schedules[0], appointments: listReq.appointments })
-
-      return { ...listReq, ...availableHours }
+      return { ...listReq }
     }
 
     public async listSpecialHour (data : GetSpecialHour) : Promise<object> {
       const { appointments, schedule } = data
       if (appointments) {
-        if (appointments.length) {
+        if (Array.isArray(appointments)) {
           appointments.forEach((item, index) => { if (typeof item.date === 'string') data.appointments[index].date = new Date(item.date) })
           if (schedule) {
             Object.entries(schedule).forEach(([key]) => {
@@ -75,7 +74,7 @@ class ScheduleModel {
                 schedule[key] = new Date(schedule[key])
               }
             })
-            const availableHours = (appointments.length && schedule) && this.listWorkingHour({ schedule, appointments })
+            const availableHours = (Array.isArray(appointments) && schedule) && this.listWorkingHour({ schedule, appointments })
             return { ...availableHours }
           }
         }
@@ -88,14 +87,42 @@ class ScheduleModel {
       const listReq = await this.prisma.professionals.findFirst({ where: { id: data.professionalId },
         select: {
           appointments: true,
-          schedules: true,
+          schedules: { orderBy: { dayOfWeek: 'asc' } },
           restDays: true,
           specialDays: {
-            include: { specialSchedules: true } }
+            select: { id: true, date: true, specialSchedules: true }
+          }
         }
       })
 
       return { ...listReq }
+    }
+
+    public async createSchedule (data : ScheduleForm) : Promise <Schedules | object> {
+      const filteredSchedule = data.schedules.filter((item) => item.dayOfWeek <= 7 && item.dayOfWeek > 0)
+
+      const createReq = await Promise.all(filteredSchedule.map((item) => this.prisma.schedules.create({ data: { ...item, professionalId: data.professionalId } })))
+
+      return createReq
+    }
+
+    public async updateSchedule (data : ScheduleForm) : Promise <Schedules | object> {
+      const filteredSchedule = data.schedules.filter((item) => item.dayOfWeek <= 7 && item.dayOfWeek > 0)
+
+      const updateReq = await Promise.all(filteredSchedule.map((item) =>
+        this.prisma.schedules.update({ where: { id: item.id }, data: { ...item } })
+      ))
+
+      return updateReq
+    }
+
+    public async deleteSchedule (data : ScheduleForm) : Promise <Schedules | object> {
+      const filteredSchedule = data.schedules.filter((item) => item.dayOfWeek < 7 && item.dayOfWeek >= 0)
+      const deleteReq = await Promise.all(filteredSchedule.map((item) =>
+        this.prisma.schedules.delete({ where: { id: item.id } })
+      ))
+
+      return deleteReq
     }
 
     public async store (data : ScheduleInformations) : Promise<Schedules | object> {
@@ -140,7 +167,6 @@ class ScheduleModel {
       const SCHEDULE_LENGTH = 5
       var specialDay
       var restPromise : object[] = []
-
       if (Object.keys(rest).length === SCHEDULE_LENGTH) {
         promiseReq.push(this.prisma.schedules.upsert({ where: { id: rest.id }, update: { ...rest }, create: { ...rest } }))
       }
