@@ -25,6 +25,7 @@ routes.get('/get-patients/:id', professionalController.listPatients)
 
 routes.post('/create-schedules/:id', scheduleController.createSchedule) // NEW
 routes.put('/update-schedules/:id', scheduleController.updateSchedule) // NEW
+routes.put('/delete-schedules/:id', scheduleController.deleteSchedule) // NEW
 
 routes.get('/get-all-schedules/:id', scheduleController.listAllSchedules)
 routes.post('/get-schedules/:id', scheduleController.list)
