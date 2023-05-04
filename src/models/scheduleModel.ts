@@ -99,7 +99,7 @@ class ScheduleModel {
     }
 
     public async createSchedule (data : ScheduleForm) : Promise <Schedules | object> {
-      const filteredSchedule = data.schedules.filter((item) => item.dayOfWeek <= 7 && item.dayOfWeek > 0)
+      const filteredSchedule = data.schedules.filter((item) => item.dayOfWeek < 7 && item.dayOfWeek > -1)
 
       const createReq = await Promise.all(filteredSchedule.map((item) => this.prisma.schedules.create({ data: { ...item, professionalId: data.professionalId } })))
 
@@ -107,7 +107,7 @@ class ScheduleModel {
     }
 
     public async updateSchedule (data : ScheduleForm) : Promise <Schedules | object> {
-      const filteredSchedule = data.schedules.filter((item) => item.dayOfWeek <= 7 && item.dayOfWeek > 0)
+      const filteredSchedule = data.schedules.filter((item) => item.dayOfWeek < 7 && item.dayOfWeek > -1)
 
       const updateReq = await Promise.all(filteredSchedule.map((item) =>
         this.prisma.schedules.update({ where: { id: item.id }, data: { ...item } })
