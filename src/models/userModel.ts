@@ -134,8 +134,7 @@ class UserModel {
         const numberUpdateReq = Object.entries({ whatsAppNumbers, phoneNumbers }).map(([key, value]) => {
           if (value !== undefined) {
             const attributeReq = value.map(async (obj) => {
-              const repeatedNumber = await this.prisma[key].findFirst({ where: { id: obj.id, AND: { userId: id } } })
-
+              const repeatedNumber = await this.prisma[key].findFirst({ where: { id: obj.id, AND: { userId: id, roleOfNumber: obj.roleOfNumber } } })
               if (repeatedNumber) {
                 return this.prisma[key].update({ where: { id: repeatedNumber.id }, data: { ...obj }, select: { id: true, number: true, roleOfNumber: true, userId: true } })
               } else {
