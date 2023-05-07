@@ -13,6 +13,12 @@ export interface AppointmentUserInformation extends Appointment {
     rut?: string
     phoneNumbers: string
     whatsAppNumbers: string
+    chosenField: number
+    chosenForecast: number
+    chosenIntervention: number
+    chosenModality: number
+    chosenSpecialty: number
+    chosenPaymentMethod: number
 }
 
 export interface AppointmentResponse {

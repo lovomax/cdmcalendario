@@ -33,6 +33,7 @@ routes.post('/get-special-hours/', scheduleController.listSpecialHour)
 routes.post('/create-schedule/:id', scheduleController.store)
 routes.put('/update-schedule/:id', scheduleController.update)
 
+routes.get('/list-appointment/:id', appointmentController.list)
 routes.post('/create-appointment/:id', appointmentController.store)
 routes.put('/update-appointment', appointmentController.update)
 routes.delete('/delete-appointment', appointmentController.delete)
