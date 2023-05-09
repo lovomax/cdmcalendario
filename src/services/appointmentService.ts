@@ -17,6 +17,17 @@ class AppointmentService {
       return { status, message, data }
     }
 
+    public async list (payload: {id: number}) : Promise<AppointmentResponse> {
+      try {
+        const listReq = await appointmentModel.list(payload)
+
+        return this.objResponse(CREATED, OK, listReq)
+      } catch (err) {
+        console.log(err)
+        return this.objResponse(FAILED, OK, err)
+      }
+    }
+
     public async store (payload : AppointmentUserInformation) : Promise<AppointmentResponse> {
       try {
         const createReq = await appointmentModel.store(payload)

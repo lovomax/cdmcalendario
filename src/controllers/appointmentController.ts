@@ -3,6 +3,13 @@ import { httpStatus } from '../utils/httpStatus'
 import appointmentService from '../services/appointmentService'
 
 class AppointmentController {
+  public async list (req: Request, res: Response) : Promise<Response> {
+    const params = { id: parseInt(req.params.id) }
+    const service = await appointmentService.list(params)
+
+    return res.status(httpStatus[service.status]).json(service)
+  }
+
   public async store (req: Request, res: Response) : Promise<Response> {
     const { body } = req
     const params = { professionalId: req.params.id }

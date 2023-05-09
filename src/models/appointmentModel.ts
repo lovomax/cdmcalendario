@@ -9,24 +9,31 @@ class AppointmentModel {
       this.prisma = new PrismaClient()
     }
 
-    public async store (data: AppointmentUserInformation) : Promise<Appointment | object> {
-      const userPayload = {
-        name: data.name,
-        lastName: data.lastName,
-        ...(data.birthDate && { birthDate: data.birthDate }),
-        ...(data.email && { email: data.email }),
-        ...(data.rut && { rut: data.rut }),
-        phoneNumbers: data.phoneNumbers,
-        whatsAppNumbers: data.whatsAppNumbers
-      }
+    public async list (data: {id: number}) : Promise<Appointment | object> {
+      const listAppointmentReq = await this.prisma.appointments.findUnique({ where: { id: data.id } })
 
+      return { ...listAppointmentReq }
+    }
+
+    public async store (data: AppointmentUserInformation) : Promise<Appointment | object> {
+      const { birthDate, email, rut, name, lastName, phoneNumbers, whatsAppNumbers, ...rest } = data
+      const userPayload = {
+        name: name,
+        lastName: lastName,
+        ...(birthDate && { birthDate: birthDate }),
+        ...(email && { email: email }),
+        ...(rut && { rut: rut }),
+        phoneNumbers: phoneNumbers,
+        whatsAppNumbers: whatsAppNumbers
+      }
+      rest.date = new Date(rest.date)
       if (data.userId) {
-        const createReq = await this.prisma.appointments.create({ data: { userId: data.userId, professionalId: data.professionalId, date: new Date(data.date) } })
+        const createReq = await this.prisma.appointments.create({ data: { ...rest } })
         return createReq
       } else {
         const userCreateReq = await userModel.store(userPayload)
         if (userCreateReq[0].id) {
-          const createAppointmentReq = await this.prisma.appointments.create({ data: { professionalId: data.professionalId, date: new Date(data.date), userId: userCreateReq[0].id } })
+          const createAppointmentReq = await this.prisma.appointments.create({ data: { ...rest, userId: userCreateReq[0].id } })
           return createAppointmentReq
         }
       }
