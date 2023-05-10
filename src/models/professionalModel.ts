@@ -100,15 +100,6 @@ class ProfessionalModel {
       return listReq
     }
 
-    public async listPatients (data : GetProfessional) : Promise<object> {
-      const listAppointmentReq = await this.prisma.appointments.findMany({ where: { professionalId: data.id } })
-      const filteredAppointments = listAppointmentReq.filter((item, index) => !listAppointmentReq.slice(index + 1).some(nextItem => nextItem.userId === item.userId))
-      const userListReq = filteredAppointments.map((appointment) => this.prisma.users.findUnique({ where: { id: appointment.userId }, select: { name: true, lastName: true, imageURL: true, birthDate: true, appointments: { select: { date: true } } } }))
-
-      const promiseUserList = await Promise.all(userListReq)
-      return promiseUserList
-    }
-
     public async getProfessional (data : GetProfessional) : Promise<Professional | object> {
       const findReq = await this.prisma.professionals.findUnique({
         where: { id: data.id },
