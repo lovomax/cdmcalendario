@@ -2,9 +2,10 @@ import { PrismaClient } from '@prisma/client'
 import { messages, status } from '../utils/httpResponses'
 import { Appointment, AppointmentResponse, AppointmentUserInformation } from '../interfaces/appointments'
 import appointmentModel from '../models/appointmentModel'
+import { GetProfessional } from '../interfaces/professionals'
 
 const { OK } = messages
-const { FAILED, CREATED } = status
+const { FAILED, CREATED, DONE } = status
 
 class AppointmentService {
     private prisma : PrismaClient
@@ -22,6 +23,28 @@ class AppointmentService {
         const listReq = await appointmentModel.list(payload)
 
         return this.objResponse(CREATED, OK, listReq)
+      } catch (err) {
+        console.log(err)
+        return this.objResponse(FAILED, OK, err)
+      }
+    }
+
+    public async listPatients (payload : GetProfessional) : Promise<AppointmentResponse> {
+      try {
+        const listReq = await appointmentModel.listPatients(payload)
+
+        return this.objResponse(DONE, OK, listReq)
+      } catch (err) {
+        console.log(err)
+        return this.objResponse(FAILED, OK, err)
+      }
+    }
+
+    public async listRegisters (payload: {id: string, startDate: Date, endDate: Date}) : Promise<AppointmentResponse> {
+      try {
+        const listReq = await appointmentModel.listRegisters(payload)
+
+        return this.objResponse(DONE, OK, listReq)
       } catch (err) {
         console.log(err)
         return this.objResponse(FAILED, OK, err)

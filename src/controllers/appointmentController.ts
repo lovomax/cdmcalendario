@@ -10,6 +10,16 @@ class AppointmentController {
     return res.status(httpStatus[service.status]).json(service)
   }
 
+  public async listPatients (req: Request, res: Response) : Promise<Response> {
+    const service = await appointmentService.listPatients({ id: req.params.id })
+    return res.status(httpStatus[service.status]).json(service)
+  }
+
+  public async listRegisters (req: Request, res: Response) : Promise<Response> {
+    const service = await appointmentService.listRegisters({ id: req.params.id, startDate: new Date(req.params.start), endDate: new Date(req.params.end) })
+    return res.status(httpStatus[service.status]).json(service)
+  }
+
   public async store (req: Request, res: Response) : Promise<Response> {
     const { body } = req
     const params = { professionalId: req.params.id }

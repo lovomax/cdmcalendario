@@ -57,17 +57,6 @@ class ProfessionalService {
         return this.objResponse(FAILED, OK, err)
       }
     }
-
-    public async listPatients (payload : GetProfessional) : Promise<ProfessionalResponse> {
-      try {
-        const listReq = await professionalModel.listPatients(payload)
-
-        return this.objResponse(DONE, OK, listReq)
-      } catch (err) {
-        console.log(err)
-        return this.objResponse(FAILED, OK, err)
-      }
-    }
 }
 
 export default new ProfessionalService()
