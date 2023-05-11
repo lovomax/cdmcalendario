@@ -8,24 +8,26 @@ datasource db {
 }
 
 model Appointments {
-  id             Int           @id @default(autoincrement()) 
-  professionalId String 
-  userId         String 
-  date           DateTime      @db.Timestamptz(6) 
-  chosenField    Int?           
-  chosenForecast Int?
-  chosenIntervention Int?
-  chosenModality Int?
-  chosenSpecialty Int?
-  chosenPaymentMethod Int?
-  field    Fields? @relation(fields: [chosenField], references: [id], onUpdate: NoAction, onDelete: Cascade)
-  forecast Forecasts? @relation(fields: [chosenForecast], references: [id], onUpdate: NoAction, onDelete: Cascade)
-  intervention Interventions? @relation(fields: [chosenIntervention], references: [id], onUpdate: NoAction, onDelete: Cascade)
-  modality Modalities? @relation(fields: [chosenModality], references: [id], onUpdate: NoAction, onDelete: Cascade)
-  specialty Specialties? @relation(fields: [chosenSpecialty], references: [id], onUpdate: NoAction, onDelete: Cascade)
-  paymentMethod PaymentMethods? @relation(fields: [chosenPaymentMethod], references: [id], onUpdate: NoAction, onDelete: Cascade)
-  professionals  Professionals @relation(fields: [professionalId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  users          Users         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  id                     Int              @id @default(autoincrement()) 
+  professionalId         String 
+  userId                 String 
+  date                   DateTime         @db.Timestamptz(6) 
+  chosenField            Int?           
+  chosenForecast         Int?
+  chosenIntervention     Int?
+  chosenModality         Int?
+  chosenSpecialty        Int?
+  chosenPaymentMethod    Int?
+  observation            String?
+  state                  State            @default(PENDING)
+  field                  Fields?          @relation(fields: [chosenField], references: [id], onUpdate: NoAction, onDelete: Cascade)
+  forecast               Forecasts?       @relation(fields: [chosenForecast], references: [id], onUpdate: NoAction, onDelete: Cascade)
+  intervention           Interventions?   @relation(fields: [chosenIntervention], references: [id], onUpdate: NoAction, onDelete: Cascade)
+  modality               Modalities?      @relation(fields: [chosenModality], references: [id], onUpdate: NoAction, onDelete: Cascade)
+  specialty              Specialties?     @relation(fields: [chosenSpecialty], references: [id], onUpdate: NoAction, onDelete: Cascade)
+  paymentMethod          PaymentMethods?  @relation(fields: [chosenPaymentMethod], references: [id], onUpdate: NoAction, onDelete: Cascade)
+  professionals          Professionals    @relation(fields: [professionalId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users                  Users            @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@index([professionalId])
   @@index([userId])
@@ -281,4 +283,12 @@ model WhatsAppNumbers {
 enum Role {
   USER
   PROFESSIONAL
+}
+
+enum State {
+  BOOKED
+  CONFIRMED
+  CANCELED
+  RESCHEDULED
+  PENDING
 }

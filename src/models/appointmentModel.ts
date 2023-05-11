@@ -17,7 +17,28 @@ class AppointmentModel {
     }
 
     public async listPatients (data : GetProfessional) : Promise<object> {
-      const listAppointmentReq = await this.prisma.appointments.findMany({ where: { professionalId: data.id }, select: { id: true, professionalId: true, date: true, chosenField: true, chosenForecast: true, chosenIntervention: true, chosenModality: true, chosenPaymentMethod: true, chosenSpecialty: true, users: { select: { rut: true, imageURL: true, name: true, lastName: true, phoneNumbers: { where: { roleOfNumber: 'USER' }, select: { number: true } }, whatsAppNumbers: { where: { roleOfNumber: 'USER' }, select: { number: true } }, email: true } } } })
+      const listAppointmentReq = await this.prisma.appointments.findMany({
+        where: { professionalId: data.id },
+        select: {
+          id: true,
+          professionalId: true,
+          date: true,
+          chosenField: true,
+          chosenForecast: true,
+          chosenIntervention: true,
+          chosenModality: true,
+          chosenPaymentMethod: true,
+          chosenSpecialty: true,
+          users: {
+            select: {
+              rut: true,
+              imageURL: true,
+              name: true,
+              lastName: true,
+              phoneNumbers: { where: { roleOfNumber: 'USER' }, select: { number: true } },
+              whatsAppNumbers: { where: { roleOfNumber: 'USER' }, select: { number: true } },
+              email: true } } } })
+
       return listAppointmentReq
     }
 
@@ -28,6 +49,8 @@ class AppointmentModel {
           id: true,
           professionalId: true,
           date: true,
+          state: true,
+          observation: true,
           chosenForecast: true,
           chosenModality: true,
           chosenSpecialty: true,
@@ -40,6 +63,9 @@ class AppointmentModel {
               whatsAppNumbers: { where: { roleOfNumber: 'USER' }, select: { number: true } },
               email: true }
           }
+        },
+        orderBy: {
+          date: 'asc'
         }
       })
       return listAppointmentReq
