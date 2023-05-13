@@ -38,6 +38,24 @@ class ProfessionalService {
       }
     }
 
+    public async listPagination (payload: {
+      cursor?: string,
+      take?: number,
+      skip?: number,
+      field: number,
+      specialty: number,
+      forecast: number,
+      modality: number}) : Promise<ProfessionalResponse> {
+      try {
+        const listReq = await professionalModel.listPagination(payload)
+
+        return this.objResponse(DONE, OK, listReq)
+      } catch (err) {
+        console.log(err)
+        return this.objResponse(FAILED, OK, err)
+      }
+    }
+
     public async list () : Promise<ProfessionalResponse> {
       try {
         const listReq = await professionalModel.list()

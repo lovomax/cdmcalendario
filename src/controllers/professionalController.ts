@@ -15,6 +15,19 @@ class ProfessionalController {
     const service = await professionalService.update(body, userId)
     return res.status(httpStatus[service.status]).json(service)
   }
+  public async listPagination (req: Request, res: Response) : Promise<Response> {
+    const payload = {
+      cursor: req.query.c,
+      take: Number(req.query.t),
+      skip: req.query.sk ? Number(req.query.sk) : 0,
+      field: req.query.fi,
+      specialty: req.query.sp,
+      forecast: req.query.fo,
+      modality: req.query.mo
+    }
+    const service = await professionalService.listPagination(payload)
+    return res.status(httpStatus[service.status]).json(service)
+  }
   public async list (req: Request, res: Response) : Promise<Response> {
     const service = await professionalService.list()
     return res.status(httpStatus[service.status]).json(service)

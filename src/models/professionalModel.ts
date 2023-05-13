@@ -94,9 +94,88 @@ class ProfessionalModel {
       return { ...orderedRequest }
     }
 
-    public async list () : Promise<ProfessionalInformations | object> {
-      const listReq = await this.prisma.professionals.findMany({ include: { users: true, professionalFields: true, professionalForecasts: true, professionalInterventions: true, professionalModalities: true, professionalPaymentMethods: true, professionalSpecialties: true } })
+    public async listPagination (data: {
+      cursor?: string,
+      take?: number,
+      skip?: number,
+      field?: number,
+      specialty?: number,
+      forecast?: number,
+      modality?: number
+     }) : Promise<ProfessionalInformations | object> {
+      const takeSkipArgs = {
+        take: data.take ? data.take : 5,
+        skip: data.skip ? data.skip : 0
+      }
+      const queryArgs = {
+        ...((data.field || data.specialty || data.forecast || data.modality) && {
+          where: {
+            AND: {
+              ...(data.field && { professionalFields: { every: { specializedId: data.field } } }),
+              ...(data.specialty && { professionalSpecialty: { every: { specializedId: data.specialty } } }),
+              ...(data.forecast && { professionalForecast: { every: { specializedId: data.forecast } } }),
+              ...(data.modality && { professionalModality: { every: { specializedId: data.modality } } })
+            }
+          }
+        }
+        )
+      }
+      if (data.cursor) {
+        const listReq = await this.prisma.professionals.findMany({
+          cursor: { id: data.cursor },
+          ...takeSkipArgs,
+          ...queryArgs,
+          include: {
+            users: {
+              select: {
+                name: true,
+                lastName: true
+              }
+            }
+          },
+          orderBy: { id: 'desc' }
+        })
+        return listReq
+      } else {
+        const listReq = await this.prisma.professionals.findMany({
+          ...takeSkipArgs,
+          include: {
+            users: {
+              select: {
+                name: true,
+                lastName: true
+              }
+            }
+          },
+          orderBy: { id: 'desc' }
+        })
 
+        return listReq
+      }
+    }
+
+    public async list () : Promise<ProfessionalInformations | object> {
+      const listReq = await this.prisma.professionals.findMany({
+        include: {
+          users: {
+            select: {
+              name: true,
+              lastName: true,
+              birthDate: true,
+              email: true,
+              imageURL: true,
+              phoneNumbers: true,
+              whatsAppNumbers: true
+            }
+          },
+          professionalFields: true,
+          professionalForecasts: true,
+          professionalInterventions: true,
+          professionalModalities: true,
+          professionalPaymentMethods: true,
+          professionalSpecialties: true
+        }
+      })
       return listReq
     }
 
