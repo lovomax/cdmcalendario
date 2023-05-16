@@ -20,10 +20,10 @@ class ProfessionalController {
       cursor: req.query.c,
       take: Number(req.query.t),
       skip: req.query.sk ? Number(req.query.sk) : 0,
-      field: req.query.fi,
-      specialty: req.query.sp,
-      forecast: req.query.fo,
-      modality: req.query.mo
+      field: Number(req.query.fi),
+      specialty: Number(req.query.sp),
+      forecast: Number(req.query.fo),
+      modality: Number(req.query.mo)
     }
     const service = await professionalService.listPagination(payload)
     return res.status(httpStatus[service.status]).json(service)

@@ -45,6 +45,10 @@ class ScheduleModel {
                 lte: new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 1),
                 gte: new Date(monthDate.getFullYear(), monthDate.getMonth())
               }
+            },
+            select: {
+              date: true,
+              professionalId: true
             }
           },
           schedules: true,

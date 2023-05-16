@@ -108,17 +108,17 @@ class ProfessionalModel {
         skip: data.skip ? data.skip : 0
       }
       const queryArgs = {
-        ...((data.field || data.specialty || data.forecast || data.modality) && {
-          where: {
-            AND: {
-              ...(data.field && { professionalFields: { every: { specializedId: data.field } } }),
-              ...(data.specialty && { professionalSpecialty: { every: { specializedId: data.specialty } } }),
-              ...(data.forecast && { professionalForecast: { every: { specializedId: data.forecast } } }),
-              ...(data.modality && { professionalModality: { every: { specializedId: data.modality } } })
+        where: {
+          AND: {
+            ...(data.field && { professionalFields: { some: { specializedId: data.field } } }),
+            ...(data.specialty && { professionalSpecialties: { some: { specializedId: data.specialty } } }),
+            ...(data.forecast && { professionalForecasts: { some: { specializedId: data.forecast } } }),
+            ...(data.modality && { professionalModalities: { some: { specializedId: data.modality } } }),
+            schedules: {
+              some: {}
             }
           }
         }
-        )
       }
       if (data.cursor) {
         const listReq = await this.prisma.professionals.findMany({
@@ -129,7 +129,8 @@ class ProfessionalModel {
             users: {
               select: {
                 name: true,
-                lastName: true
+                lastName: true,
+                imageURL: true
               }
             }
           },
@@ -139,17 +140,18 @@ class ProfessionalModel {
       } else {
         const listReq = await this.prisma.professionals.findMany({
           ...takeSkipArgs,
+          ...queryArgs,
           include: {
             users: {
               select: {
                 name: true,
-                lastName: true
+                lastName: true,
+                imageURL: true
               }
             }
           },
           orderBy: { id: 'desc' }
         })
-
         return listReq
       }
     }
