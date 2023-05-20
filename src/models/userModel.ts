@@ -128,7 +128,7 @@ class UserModel {
     }
 
     public async update (data: UserUpdateInformations) : Promise<User | object> {
-      const { whatsAppNumbers, phoneNumbers, id, ...rest } = data
+      const { whatsAppNumbers, phoneNumbers, id, userForecastId, ...rest } = data
 
       try {
         const numberUpdateReq = Object.entries({ whatsAppNumbers, phoneNumbers }).map(([key, value]) => {
@@ -163,7 +163,7 @@ class UserModel {
           where: {
             id: id
           },
-          data: rest,
+          data: { ...rest, userForecast: { connect: { id: Number(userForecastId) } } },
           select: {
             id: true,
             email: true,
@@ -173,7 +173,8 @@ class UserModel {
             birthDate: true,
             rut: true,
             phoneNumbers: true,
-            whatsAppNumbers: true
+            whatsAppNumbers: true,
+            userForecastId: true
           }
         })
 
