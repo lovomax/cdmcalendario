@@ -47,7 +47,8 @@ model Forecasts {
   id                    Int                     @id @default(autoincrement()) 
   name                  String 
   professionalForecasts ProfessionalForecasts[]
-  appointments       Appointments[]
+  appointments          Appointments[]
+  users                 Users[]
   @@map("forecasts")
 }
 
@@ -251,6 +252,8 @@ model Users {
   lastName        String 
   rut             String?            @unique
   birthDate       DateTime?          @db.Timestamptz(6) 
+  userForecastId  Int?
+  userForecast    Forecasts? @relation(fields: [userForecastId], references: [id], onDelete: Cascade)
   appointments    Appointments[]
   phoneNumbers    PhoneNumbers[]
   professionals   Professionals?

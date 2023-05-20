@@ -51,6 +51,7 @@ export interface GetUser {
 
 export interface UserUpdateInformations extends User {
     id: string
+    userForecastId?: number
     phoneNumbers: PhoneNumbers[]
     whatsAppNumbers: WhatsAppNumbers[]
     password: Auth

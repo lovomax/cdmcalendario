@@ -90,7 +90,6 @@ class ScheduleModel {
     public async listAllSchedules (data : GetSchedule) : Promise<object> {
       const listReq = await this.prisma.professionals.findFirst({ where: { id: data.professionalId },
         select: {
-          appointments: true,
           schedules: { orderBy: { dayOfWeek: 'asc' } },
           restDays: true,
           specialDays: {
