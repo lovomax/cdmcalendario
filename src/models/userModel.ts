@@ -128,7 +128,7 @@ class UserModel {
     }
 
     public async update (data: UserUpdateInformations) : Promise<User | object> {
-      const { whatsAppNumbers, phoneNumbers, id, userForecastId, ...rest } = data
+      const { whatsAppNumbers, phoneNumbers, id, ...rest } = data
 
       try {
         const numberUpdateReq = Object.entries({ whatsAppNumbers, phoneNumbers }).map(([key, value]) => {
@@ -159,11 +159,14 @@ class UserModel {
           }
         })
 
+        if (rest.userForecastId) {
+          rest.userForecastId = Number(rest.userForecastId)
+        }
         const updateReq = await this.prisma.users.update({
           where: {
             id: id
           },
-          data: { ...rest, userForecast: { connect: { id: Number(userForecastId) } } },
+          data: { ...rest },
           select: {
             id: true,
             email: true,
