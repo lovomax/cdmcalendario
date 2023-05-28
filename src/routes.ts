@@ -37,6 +37,7 @@ routes.get('/list-appointment/:id', appointmentController.list)
 routes.get('/get-patients/:id', appointmentController.listPatients)
 routes.get('/get-registers/:id/:start/:end', appointmentController.listRegisters)
 routes.post('/create-appointment/:id', appointmentController.store)
+routes.post('/create-professional-appointment', appointmentController.appointmentProfessional)
 routes.put('/update-appointment', appointmentController.update)
 routes.delete('/delete-appointment', appointmentController.delete)
 

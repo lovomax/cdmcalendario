@@ -23,7 +23,8 @@ class ProfessionalController {
       field: Number(req.query.fi),
       specialty: Number(req.query.sp),
       forecast: Number(req.query.fo),
-      modality: Number(req.query.mo)
+      modality: Number(req.query.mo),
+      service: Number(req.query.se)
     }
     const service = await professionalService.listPagination(payload)
     return res.status(httpStatus[service.status]).json(service)

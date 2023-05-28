@@ -91,7 +91,6 @@ class UserModel {
             professionals: {
               include: {
                 studies: true,
-                appointments: true,
                 professionalFields: true,
                 professionalForecasts: true,
                 professionalInterventions: true,

@@ -27,6 +27,12 @@ class AppointmentController {
     return res.status(httpStatus[service.status]).json(service)
   }
 
+  public async appointmentProfessional (req: Request, res: Response) : Promise<Response> {
+    const { body } = req
+    const service = await appointmentService.createProfessionalAppointment({ ...body })
+    return res.status(httpStatus[service.status]).json(service)
+  }
+
   public async update (req: Request, res: Response) : Promise<Response> {
     const { body } = req
     const service = await appointmentService.update(body)

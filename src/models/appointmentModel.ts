@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { Appointment, AppointmentUserInformation } from '../interfaces/appointments'
+import { Appointment, AppointmentProfessional, AppointmentUserInformation } from '../interfaces/appointments'
 import userModel from './userModel'
 import { GetProfessional } from '../interfaces/professionals'
 
@@ -23,12 +23,6 @@ class AppointmentModel {
           id: true,
           professionalId: true,
           date: true,
-          chosenField: true,
-          chosenForecast: true,
-          chosenIntervention: true,
-          chosenModality: true,
-          chosenPaymentMethod: true,
-          chosenSpecialty: true,
           users: {
             select: {
               rut: true,
@@ -51,8 +45,11 @@ class AppointmentModel {
           date: true,
           state: true,
           observation: true,
+          chosenField: true,
           chosenForecast: true,
+          chosenIntervention: true,
           chosenModality: true,
+          chosenPaymentMethod: true,
           chosenSpecialty: true,
           users: {
             select: {
@@ -95,6 +92,21 @@ class AppointmentModel {
       }
       return {}
     }
+
+    public async createProfessionalAppointment (data : AppointmentProfessional) : Promise<Appointment> {
+      console.log(data)
+      const { rut, ...rest } = data
+      const user = await this.prisma.users.findFirstOrThrow({ where: { rut: rut }, select: { id: true } })
+      const createReq = await this.prisma.appointments.create({
+        data: {
+          userId: user.id,
+          ...rest
+        }
+      })
+
+      return createReq
+    }
+
     public async update (data: Appointment) : Promise<Appointment> {
       const updateReq = await this.prisma.appointments.update({ where: { id: data.id }, data: { ...data } })
 

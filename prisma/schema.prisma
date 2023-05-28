@@ -18,12 +18,14 @@ model Appointments {
   chosenModality         Int?
   chosenSpecialty        Int?
   chosenPaymentMethod    Int?
+  chosenService          Int?
   observation            String?
   state                  State            @default(PENDING)
   field                  Fields?          @relation(fields: [chosenField], references: [id], onUpdate: NoAction, onDelete: Cascade)
   forecast               Forecasts?       @relation(fields: [chosenForecast], references: [id], onUpdate: NoAction, onDelete: Cascade)
   intervention           Interventions?   @relation(fields: [chosenIntervention], references: [id], onUpdate: NoAction, onDelete: Cascade)
   modality               Modalities?      @relation(fields: [chosenModality], references: [id], onUpdate: NoAction, onDelete: Cascade)
+  service                Services?        @relation(fields: [chosenService], references: [id], onUpdate: NoAction, onDelete: Cascade)
   specialty              Specialties?     @relation(fields: [chosenSpecialty], references: [id], onUpdate: NoAction, onDelete: Cascade)
   paymentMethod          PaymentMethods?  @relation(fields: [chosenPaymentMethod], references: [id], onUpdate: NoAction, onDelete: Cascade)
   professionals          Professionals    @relation(fields: [professionalId], references: [id], onDelete: Cascade, onUpdate: NoAction)
@@ -147,6 +149,18 @@ model ProfessionalPaymentMethods {
   @@map("professional_payment_methods")
 }
 
+model ProfessionalServices {
+  id             Int           @id @default(autoincrement()) 
+  professionalId String 
+  specializedId    Int 
+  professionals  Professionals @relation(fields: [professionalId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  specialties    Services   @relation(fields: [specializedId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([professionalId])
+  @@index([specializedId])
+  @@map("professional_services")
+}
+
 model ProfessionalSpecialties {
   id             Int           @id @default(autoincrement()) 
   professionalId String 
@@ -168,6 +182,7 @@ model Professionals {
   professionalInterventions  ProfessionalInterventions[]
   professionalModalities     ProfessionalModalities[]
   professionalPaymentMethods ProfessionalPaymentMethods[]
+  professionalServices       ProfessionalServices[]
   professionalSpecialties    ProfessionalSpecialties[]
   users                      Users                        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   restDays                   RestDays[]
@@ -200,6 +215,15 @@ model Schedules {
 
   @@index([professionalId])
   @@map("schedules")
+}
+
+model Services {
+  id                      Int                       @id @default(autoincrement()) 
+  name                    String 
+  professionalSpecialties ProfessionalServices[]
+  appointments            Appointments[]
+
+  @@map("services")
 }
 
 model SpecialDays {

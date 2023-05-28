@@ -101,7 +101,8 @@ class ProfessionalModel {
       field?: number,
       specialty?: number,
       forecast?: number,
-      modality?: number
+      modality?: number,
+      service?: number
      }) : Promise<ProfessionalInformations | object> {
       const takeSkipArgs = {
         take: data.take ? data.take : 5,
@@ -114,6 +115,7 @@ class ProfessionalModel {
             ...(data.specialty && { professionalSpecialties: { some: { specializedId: data.specialty } } }),
             ...(data.forecast && { professionalForecasts: { some: { specializedId: data.forecast } } }),
             ...(data.modality && { professionalModalities: { some: { specializedId: data.modality } } }),
+            ...(data.service && { professionalServices: { some: { specializedId: data.service } } }),
             schedules: {
               some: {}
             }
@@ -175,7 +177,8 @@ class ProfessionalModel {
           professionalInterventions: true,
           professionalModalities: true,
           professionalPaymentMethods: true,
-          professionalSpecialties: true
+          professionalSpecialties: true,
+          professionalServices: true
         }
       })
       return listReq
@@ -204,7 +207,8 @@ class ProfessionalModel {
           professionalInterventions: true,
           professionalModalities: true,
           professionalPaymentMethods: true,
-          professionalSpecialties: true
+          professionalSpecialties: true,
+          professionalServices: true
         }
       })
 

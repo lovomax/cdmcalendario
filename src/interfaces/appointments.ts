@@ -21,6 +21,19 @@ export interface AppointmentUserInformation extends Appointment {
     chosenPaymentMethod: number
 }
 
+export interface AppointmentProfessional {
+    professionalId: string
+    rut: string
+    date: Date
+    observation: string
+    chosenField: number
+    chosenForecast: number
+    chosenIntervention: number
+    chosenModality: number
+    chosenSpecialty: number
+    chosenPaymentMethod: number
+}
+
 export interface AppointmentResponse {
     status: string
     message: string

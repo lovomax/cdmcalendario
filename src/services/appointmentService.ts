@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import { messages, status } from '../utils/httpResponses'
-import { Appointment, AppointmentResponse, AppointmentUserInformation } from '../interfaces/appointments'
+import { Appointment, AppointmentProfessional, AppointmentResponse, AppointmentUserInformation } from '../interfaces/appointments'
 import appointmentModel from '../models/appointmentModel'
 import { GetProfessional } from '../interfaces/professionals'
 
@@ -54,6 +54,16 @@ class AppointmentService {
     public async store (payload : AppointmentUserInformation) : Promise<AppointmentResponse> {
       try {
         const createReq = await appointmentModel.store(payload)
+
+        return this.objResponse(CREATED, OK, createReq)
+      } catch (err) {
+        console.log(err)
+        return this.objResponse(FAILED, OK, err)
+      }
+    }
+    public async createProfessionalAppointment (payload : AppointmentProfessional) : Promise<AppointmentResponse> {
+      try {
+        const createReq = await appointmentModel.createProfessionalAppointment(payload)
 
         return this.objResponse(CREATED, OK, createReq)
       } catch (err) {
