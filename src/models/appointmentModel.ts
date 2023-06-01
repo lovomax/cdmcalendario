@@ -51,9 +51,10 @@ class AppointmentModel {
           chosenModality: true,
           chosenPaymentMethod: true,
           chosenSpecialty: true,
+          chosenService: true,
           users: {
             select: {
-              rut: true,
+              id: true,
               name: true,
               lastName: true,
               phoneNumbers: { where: { roleOfNumber: 'USER' }, select: { number: true } },
@@ -95,12 +96,11 @@ class AppointmentModel {
 
     public async createProfessionalAppointment (data : AppointmentProfessional) : Promise<Appointment> {
       console.log(data)
-      const { rut, ...rest } = data
-      const user = await this.prisma.users.findFirstOrThrow({ where: { rut: rut }, select: { id: true } })
+      /*       const { userId, ...rest } = data */
+      /*       const user = await this.prisma.users.findFirstOrThrow({ where: { rut: rut }, select: { id: true } }) */
       const createReq = await this.prisma.appointments.create({
         data: {
-          userId: user.id,
-          ...rest
+          ...data
         }
       })
 

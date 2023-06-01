@@ -23,7 +23,7 @@ export interface AppointmentUserInformation extends Appointment {
 
 export interface AppointmentProfessional {
     professionalId: string
-    rut: string
+    userId: string
     date: Date
     observation: string
     chosenField: number

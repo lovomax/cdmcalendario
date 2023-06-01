@@ -201,7 +201,6 @@ class ProfessionalModel {
             }
           },
           studies: true,
-          appointments: true,
           professionalFields: true,
           professionalForecasts: true,
           professionalInterventions: true,

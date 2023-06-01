@@ -40,6 +40,12 @@ export interface ProfessionalSpecialties{
     specializedId: number
 }
 
+export interface ProfessionalServices{
+    id: number
+    professionalId: string
+    specializedId: number
+}
+
 export interface Field{
     name: string
 }
@@ -64,6 +70,10 @@ export interface Specialty{
     name: string
 }
 
+export interface Service{
+    name: string
+}
+
 export interface Professional {
     userId: string
 }
@@ -82,6 +92,7 @@ export interface ProfessionalInformations extends Professional {
     professionalModalities: ProfessionalModalities[]
     professionalPaymentMethods: ProfessionalPaymentMethods[]
     professionalSpecialties: ProfessionalSpecialties[]
+    professionalServices: ProfessionalServices[]
 }
 
 export interface GetProfessional {
