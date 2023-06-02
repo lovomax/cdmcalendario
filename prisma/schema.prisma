@@ -176,6 +176,8 @@ model ProfessionalSpecialties {
 model Professionals {
   id                         String                       @id @default(uuid())
   userId                     String                       @unique
+  dateRangeStart             Int?
+  dateRangeEnd               Int?
   appointments               Appointments[]
   professionalFields         ProfessionalFields[]
   professionalForecasts      ProfessionalForecasts[]

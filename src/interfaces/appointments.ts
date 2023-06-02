@@ -5,6 +5,19 @@ export interface Appointment {
     date: Date
 }
 
+export interface AppointmentUpdate extends Appointment {
+    observation: string
+    chosenField: number
+    chosenForecast: number
+    chosenIntervention: number
+    chosenModality: number
+    chosenSpecialty: number
+    chosenPaymentMethod: number
+    state: state
+}
+
+type state = 'BOOKED' | 'CONFIRMED' | 'CANCELED' | 'RESCHEDULED' | 'PENDING'
+
 export interface AppointmentUserInformation extends Appointment {
     name: string
     lastName: string
@@ -23,8 +36,9 @@ export interface AppointmentUserInformation extends Appointment {
 
 export interface AppointmentProfessional {
     professionalId: string
-    rut: string
+    userId: string
     date: Date
+    state: state
     observation: string
     chosenField: number
     chosenForecast: number
@@ -32,6 +46,7 @@ export interface AppointmentProfessional {
     chosenModality: number
     chosenSpecialty: number
     chosenPaymentMethod: number
+    chosenService: number
 }
 
 export interface AppointmentResponse {

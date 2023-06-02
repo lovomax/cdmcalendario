@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { Appointment, AppointmentProfessional, AppointmentUserInformation } from '../interfaces/appointments'
+import { Appointment, AppointmentProfessional, AppointmentUpdate, AppointmentUserInformation } from '../interfaces/appointments'
 import userModel from './userModel'
 import { GetProfessional } from '../interfaces/professionals'
 
@@ -51,9 +51,10 @@ class AppointmentModel {
           chosenModality: true,
           chosenPaymentMethod: true,
           chosenSpecialty: true,
+          chosenService: true,
           users: {
             select: {
-              rut: true,
+              id: true,
               name: true,
               lastName: true,
               phoneNumbers: { where: { roleOfNumber: 'USER' }, select: { number: true } },
@@ -94,21 +95,31 @@ class AppointmentModel {
     }
 
     public async createProfessionalAppointment (data : AppointmentProfessional) : Promise<Appointment> {
-      console.log(data)
-      const { rut, ...rest } = data
-      const user = await this.prisma.users.findFirstOrThrow({ where: { rut: rut }, select: { id: true } })
       const createReq = await this.prisma.appointments.create({
         data: {
-          userId: user.id,
-          ...rest
+          ...data
         }
       })
 
       return createReq
     }
 
-    public async update (data: Appointment) : Promise<Appointment> {
-      const updateReq = await this.prisma.appointments.update({ where: { id: data.id }, data: { ...data } })
+    public async update (data: AppointmentUpdate) : Promise<Appointment> {
+      data.date = new Date(data.date)
+      const updateReq = await this.prisma.appointments.update({ where: { id: data.id },
+        data: {
+          id: data.id,
+          date: data.date,
+          state: data.state,
+          observation: data.observation,
+          chosenField: data.chosenField,
+          chosenForecast: data.chosenForecast,
+          chosenIntervention: data.chosenIntervention,
+          chosenModality: data.chosenModality,
+          chosenPaymentMethod: data.chosenPaymentMethod,
+          chosenService: data.chosenSpecialty,
+          chosenSpecialty: data.chosenSpecialty
+        } })
 
       return updateReq
     }

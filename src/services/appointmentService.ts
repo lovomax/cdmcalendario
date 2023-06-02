@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import { messages, status } from '../utils/httpResponses'
-import { Appointment, AppointmentProfessional, AppointmentResponse, AppointmentUserInformation } from '../interfaces/appointments'
+import { Appointment, AppointmentProfessional, AppointmentResponse, AppointmentUpdate, AppointmentUserInformation } from '../interfaces/appointments'
 import appointmentModel from '../models/appointmentModel'
 import { GetProfessional } from '../interfaces/professionals'
 
@@ -72,7 +72,7 @@ class AppointmentService {
       }
     }
 
-    public async update (payload : Appointment) : Promise<AppointmentResponse> {
+    public async update (payload : AppointmentUpdate) : Promise<AppointmentResponse> {
       try {
         const createReq = await appointmentModel.update(payload)
 
