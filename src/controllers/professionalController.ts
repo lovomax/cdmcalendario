@@ -18,6 +18,7 @@ class ProfessionalController {
   public async listPagination (req: Request, res: Response) : Promise<Response> {
     const payload = {
       cursor: req.query.c,
+      userAge: req.query.ua && Number(req.query.ua),
       take: Number(req.query.t),
       skip: req.query.sk ? Number(req.query.sk) : 0,
       field: Number(req.query.fi),

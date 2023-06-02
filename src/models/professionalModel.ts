@@ -9,9 +9,10 @@ class ProfessionalModel {
     }
 
     public async store (data : ProfessionalInformations) : Promise<Professional | object> {
-      const { studies: study, userId, ...rest } = data
+      const { studies: study, dateRangeStart, dateRangeEnd, userId, ...rest } = data
       try {
         const justOneStudy : Study = study[0]
+        const dateCreate = { dateRangeStart, dateRangeEnd }
         const createReq = await this.prisma.professionals.create({
           data: {
             userId,
@@ -19,7 +20,8 @@ class ProfessionalModel {
               create: {
                 ...justOneStudy
               }
-            }
+            },
+            ...dateCreate
           }
         })
 
@@ -46,7 +48,7 @@ class ProfessionalModel {
 
     public async update (data : ProfessionalInformations, idInformation : GetProfessional) : Promise<ProfessionalInformations| object> {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { userId, studies, ...rest } = data
+      const { userId, studies, dateRangeStart, dateRangeEnd, ...rest } = data
 
       const updateReq = Object.entries(rest).map(async ([key, value]) => {
         if (value) {
@@ -85,6 +87,13 @@ class ProfessionalModel {
           studyObj.push(await this.prisma.studies.create({ data: { ...studies[0], professionalId: idInformation.id } }))
         }
       }
+      if (dateRangeStart || dateRangeEnd) {
+        const updateDate = { dateRangeStart, dateRangeEnd }
+        await this.prisma.professionals.update({ where: { id: idInformation.id },
+          data: {
+            ...updateDate
+          } })
+      }
       const promiseResolve = await Promise.all(updateReq)
 
       promiseResolve.push({ studies: studyObj })
@@ -96,6 +105,7 @@ class ProfessionalModel {
 
     public async listPagination (data: {
       cursor?: string,
+      userAge?: number,
       take?: number,
       skip?: number,
       field?: number,
@@ -116,6 +126,7 @@ class ProfessionalModel {
             ...(data.forecast && { professionalForecasts: { some: { specializedId: data.forecast } } }),
             ...(data.modality && { professionalModalities: { some: { specializedId: data.modality } } }),
             ...(data.service && { professionalServices: { some: { specializedId: data.service } } }),
+            ...(data.userAge && { dateRangeStart: { lte: data.userAge }, dateRangeEnd: { gte: data.userAge } }),
             schedules: {
               some: {}
             }
