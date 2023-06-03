@@ -46,7 +46,8 @@ class ProfessionalService {
       specialty: number,
       forecast: number,
       modality: number,
-      service: number}) : Promise<ProfessionalResponse> {
+      service: number,
+      intervention: number}) : Promise<ProfessionalResponse> {
       try {
         const listReq = await professionalModel.listPagination(payload)
 
