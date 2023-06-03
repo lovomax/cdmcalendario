@@ -41,9 +41,15 @@ class ScheduleModel {
         select: {
           appointments: {
             where: {
-              date: {
-                lte: new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 1),
-                gte: new Date(monthDate.getFullYear(), monthDate.getMonth())
+              AND: {
+
+                date: {
+                  lte: new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 1),
+                  gte: new Date(monthDate.getFullYear(), monthDate.getMonth())
+                },
+                state: {
+                  not: 'CANCELED'
+                }
               }
             },
             select: {

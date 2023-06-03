@@ -112,7 +112,8 @@ class ProfessionalModel {
       specialty?: number,
       forecast?: number,
       modality?: number,
-      service?: number
+      service?: number,
+      intervention?: number
      }) : Promise<ProfessionalInformations | object> {
       const takeSkipArgs = {
         take: data.take ? data.take : 5,
@@ -126,6 +127,7 @@ class ProfessionalModel {
             ...(data.forecast && { professionalForecasts: { some: { specializedId: data.forecast } } }),
             ...(data.modality && { professionalModalities: { some: { specializedId: data.modality } } }),
             ...(data.service && { professionalServices: { some: { specializedId: data.service } } }),
+            ...(data.intervention && { professionalInterventions: { some: { specializedId: data.intervention } } }),
             ...(data.userAge && { dateRangeStart: { lte: data.userAge }, dateRangeEnd: { gte: data.userAge } }),
             schedules: {
               some: {}
