@@ -97,6 +97,19 @@ export interface ProfessionalInformations extends Professional {
     professionalServices: ProfessionalServices[]
 }
 
+export interface GetPaginationProfessional {
+    cursor?: string,
+    userAge?: number,
+    take?: number,
+    skip?: number,
+    field?: number,
+    specialty?: number,
+    forecast?: number,
+    modality?: number,
+    service?: number,
+    intervention?: number
+}
+
 export interface GetProfessional {
     id: string
 }

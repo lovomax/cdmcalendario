@@ -29,6 +29,17 @@ class AppointmentService {
       }
     }
 
+    public async getSessionNumber (payload: {professionalId: string, userId: string}) : Promise<AppointmentResponse> {
+      try {
+        const listReq = await appointmentModel.getSessionNumber(payload)
+
+        return this.objResponse(CREATED, OK, listReq)
+      } catch (err) {
+        console.log(err)
+        return this.objResponse(FAILED, OK, err)
+      }
+    }
+
     public async listPatients (payload : GetProfessional) : Promise<AppointmentResponse> {
       try {
         const listReq = await appointmentModel.listPatients(payload)
@@ -39,8 +50,42 @@ class AppointmentService {
         return this.objResponse(FAILED, OK, err)
       }
     }
+    public async findAllPatients (payload : {id: string, searchString?: string}) : Promise<AppointmentResponse> {
+      try {
+        console.log(payload)
+        const listReq = await appointmentModel.findAllPatients(payload)
 
-    public async listRegisters (payload: {id: string, startDate: Date, endDate: Date}) : Promise<AppointmentResponse> {
+        return this.objResponse(DONE, OK, listReq)
+      } catch (err) {
+        console.log(err)
+        return this.objResponse(FAILED, OK, err)
+      }
+    }
+
+    public async findPatients (payload : {id: string, searchString?: string}) : Promise<AppointmentResponse> {
+      try {
+        console.log(payload)
+        const listReq = await appointmentModel.findPatients(payload)
+
+        return this.objResponse(DONE, OK, listReq)
+      } catch (err) {
+        console.log(err)
+        return this.objResponse(FAILED, OK, err)
+      }
+    }
+
+    public async listAllRegisters (payload: {id: string, startDate: Date, endDate: Date, userRut: string}) : Promise<AppointmentResponse> {
+      try {
+        const listReq = await appointmentModel.listAllRegisters(payload)
+
+        return this.objResponse(DONE, OK, listReq)
+      } catch (err) {
+        console.log(err)
+        return this.objResponse(FAILED, OK, err)
+      }
+    }
+
+    public async listRegisters (payload: {id: string, startDate: Date, endDate: Date, userRut: string}) : Promise<AppointmentResponse> {
       try {
         const listReq = await appointmentModel.listRegisters(payload)
 
@@ -78,6 +123,7 @@ class AppointmentService {
 
         return this.objResponse(CREATED, OK, createReq)
       } catch (err) {
+        console.log(err)
         return this.objResponse(FAILED, OK, err)
       }
     }

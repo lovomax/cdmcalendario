@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
@@ -11,6 +12,7 @@ model Appointments {
   id                     Int              @id @default(autoincrement()) 
   professionalId         String 
   userId                 String 
+  sessionNumber          Int              @default(0)
   date                   DateTime         @db.Timestamptz(6) 
   chosenField            Int?           
   chosenForecast         Int?
@@ -276,9 +278,11 @@ model Users {
   imageURL        String? 
   name            String 
   lastName        String 
+  fullName        String?
   rut             String?            @unique
   birthDate       DateTime?          @db.Timestamptz(6) 
   userForecastId  Int?
+  roleOfUser      Role               @default(USER)
   userForecast    Forecasts? @relation(fields: [userForecastId], references: [id], onDelete: Cascade)
   appointments    Appointments[]
   phoneNumbers    PhoneNumbers[]
@@ -312,6 +316,7 @@ model WhatsAppNumbers {
 enum Role {
   USER
   PROFESSIONAL
+  ADMIN
 }
 
 enum State {

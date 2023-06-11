@@ -10,13 +10,33 @@ class AppointmentController {
     return res.status(httpStatus[service.status]).json(service)
   }
 
+  public async getSessionNumber (req: Request, res: Response) : Promise<Response> {
+    const service = await appointmentService.getSessionNumber({ professionalId: req.params.pid, userId: req.params.uid })
+    return res.status(httpStatus[service.status]).json(service)
+  }
+
   public async listPatients (req: Request, res: Response) : Promise<Response> {
     const service = await appointmentService.listPatients({ id: req.params.id })
     return res.status(httpStatus[service.status]).json(service)
   }
 
+  public async findPatients (req: Request, res: Response) : Promise<Response> {
+    const service = await appointmentService.findPatients({ id: req.params.id, searchString: req.query.ps })
+    return res.status(httpStatus[service.status]).json(service)
+  }
+
+  public async findAllPatients (req: Request, res: Response) : Promise<Response> {
+    const service = await appointmentService.findAllPatients({ id: req.params.id, searchString: req.query.ps })
+    return res.status(httpStatus[service.status]).json(service)
+  }
+
+  public async listAllRegisters (req: Request, res: Response) : Promise<Response> {
+    const service = await appointmentService.listAllRegisters({ id: req.params.id, startDate: new Date(req.params.start), endDate: new Date(req.params.end), userRut: req.query.ru })
+    return res.status(httpStatus[service.status]).json(service)
+  }
+
   public async listRegisters (req: Request, res: Response) : Promise<Response> {
-    const service = await appointmentService.listRegisters({ id: req.params.id, startDate: new Date(req.params.start), endDate: new Date(req.params.end) })
+    const service = await appointmentService.listRegisters({ id: req.params.id, startDate: new Date(req.params.start), endDate: new Date(req.params.end), userRut: req.query.ru })
     return res.status(httpStatus[service.status]).json(service)
   }
 
