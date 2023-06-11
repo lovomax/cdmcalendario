@@ -16,6 +16,25 @@ class AppointmentModel {
       return { ...listAppointmentReq }
     }
 
+    public async getSessionNumber (data: {professionalId: string, userId: string}) : Promise<Appointment | object> {
+      const listAppointment = await this.prisma.appointments.findMany({
+        where: {
+          AND: {
+            professionalId: data.professionalId,
+            userId: data.userId,
+            NOT: {
+              state: 'PENDING'
+            }
+          }
+        }
+      })
+      if (listAppointment instanceof Array) {
+        return { totalSessionNumber: listAppointment.length }
+      }
+
+      return { totalSessionNumber: 0 }
+    }
+
     public async listPatients (data : GetProfessional) : Promise<object> {
       const listAppointmentReq = await this.prisma.appointments.findMany({
         where: { professionalId: data.id },
@@ -36,14 +55,140 @@ class AppointmentModel {
       return listAppointmentReq
     }
 
-    public async listRegisters (data: {id: string, startDate: Date, endDate: Date}) : Promise<object> {
+    public async findAllPatients (data : {id: string, searchString?: string}) : Promise<object> {
+      const verify = await this.prisma.users.findUniqueOrThrow({ where: { id: data.id } })
+      if (verify.roleOfUser !== 'ADMIN') {
+        throw Error('Unathorized access')
+      }
+
+      let dividedString = ''
+      if (data.searchString) {
+        dividedString = data.searchString.toLocaleLowerCase().replace(' ', ' | ')
+      }
       const listAppointmentReq = await this.prisma.appointments.findMany({
-        where: { AND: { professionalId: data.id, date: { lte: data.endDate, gte: data.startDate } } },
+        distinct: ['userId'],
+        where: { users: { AND: { name: { search: dividedString }, lastName: { search: dividedString } } } },
+        select: {
+          id: true,
+          professionalId: true,
+          users: {
+            select: {
+              rut: true,
+              imageURL: true,
+              name: true,
+              lastName: true } } } })
+
+      return listAppointmentReq
+    }
+
+    public async findPatients (data : {id: string, searchString?: string, userRut?: string}) : Promise<object> {
+      let dividedString = ''
+      if (data.searchString) {
+        dividedString = data.searchString.toLocaleLowerCase()
+      }
+      /*       const listAppointment = await this.prisma.$queryRaw`SELECT a.id, a.professionalId, a.userId, u.rut, u.imageURL, u.name, u.lastName DISTINCT a.userId FROM appointments a, users u WHERE ` */
+      const listAppointmentReq = await this.prisma.appointments.findMany({
+        distinct: ['userId'],
+        where: { professionalId: data.id, users: { AND: { fullName: { contains: dividedString } } } },
+        select: {
+          id: true,
+          professionalId: true,
+          users: {
+            select: {
+              rut: true,
+              imageURL: true,
+              name: true,
+              lastName: true
+            }
+          }
+        }
+      })
+
+      return listAppointmentReq
+    }
+
+    public async listAllPatients (data : {id: string}) : Promise<object> {
+      const verify = await this.prisma.users.findUniqueOrThrow({ where: { id: data.id } })
+      if (verify.roleOfUser !== 'ADMIN') {
+        throw Error('Unauthorized entry')
+      }
+      const listAppointmentReq = await this.prisma.appointments.findMany({
+        distinct: ['userId'],
+        select: {
+          id: true,
+          professionalId: true,
+          date: true,
+          users: {
+            select: {
+              rut: true,
+              imageURL: true,
+              name: true,
+              lastName: true,
+              phoneNumbers: { where: { roleOfNumber: 'USER' }, select: { number: true } },
+              whatsAppNumbers: { where: { roleOfNumber: 'USER' }, select: { number: true } },
+              email: true } } } })
+
+      return listAppointmentReq
+    }
+
+    public async listAllRegisters (data: {id: string, startDate: Date, endDate: Date, userRut?: string}) : Promise<object> {
+      const verify = await this.prisma.users.findUniqueOrThrow({ where: { id: data.id } })
+      if (verify.roleOfUser === 'ADMIN') {
+        const listAppointmentReq = await this.prisma.appointments.findMany({
+          where: { ...(data.userRut && { users: { rut: { equals: data.userRut } } }), date: { lte: data.endDate, gte: data.startDate } },
+          select: {
+            id: true,
+            professionalId: true,
+            date: true,
+            state: true,
+            sessionNumber: true,
+            observation: true,
+            chosenField: true,
+            chosenForecast: true,
+            chosenIntervention: true,
+            chosenModality: true,
+            chosenPaymentMethod: true,
+            chosenSpecialty: true,
+            chosenService: true,
+            users: {
+              select: {
+                id: true,
+                name: true,
+                lastName: true,
+                phoneNumbers: { where: { roleOfNumber: 'USER' }, select: { number: true } },
+                whatsAppNumbers: { where: { roleOfNumber: 'USER' }, select: { number: true } },
+                email: true }
+            },
+            professionals: {
+              select: {
+                users: {
+                  select: {
+                    name: true,
+                    lastName: true,
+                    email: true
+                  }
+                }
+              }
+            }
+          },
+          orderBy: {
+            date: 'asc'
+          }
+        })
+        return listAppointmentReq
+      }
+      throw Error('Unauthorized entry')
+    }
+
+    public async listRegisters (data: {id: string, startDate: Date, endDate: Date, userRut?: string}) : Promise<object> {
+      const listAppointmentReq = await this.prisma.appointments.findMany({
+        where: { AND: { professionalId: data.id, ...(data.userRut && { users: { rut: { equals: data.userRut } } }), date: { lte: data.endDate, gte: data.startDate } } },
         select: {
           id: true,
           professionalId: true,
           date: true,
           state: true,
+          sessionNumber: true,
           observation: true,
           chosenField: true,
           chosenForecast: true,
@@ -111,6 +256,7 @@ class AppointmentModel {
           id: data.id,
           date: data.date,
           state: data.state,
+          sessionNumber: data.sessionNumber,
           observation: data.observation,
           chosenField: data.chosenField,
           chosenForecast: data.chosenForecast,

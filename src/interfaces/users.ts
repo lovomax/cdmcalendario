@@ -19,6 +19,16 @@ export interface Appointments {
     date: Date
 }
 
+export interface Addresses {
+    id: number
+    userId: string
+    region: number
+    province: number
+    comune: number
+    street: string
+    roleOfAddress: role
+}
+
 export interface PhoneNumbers {
     id: number
     userId: string

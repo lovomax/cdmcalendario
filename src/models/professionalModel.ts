@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { GetProfessional, Professional, ProfessionalInformations, Study } from '../interfaces/professionals'
+import { GetPaginationProfessional, GetProfessional, Professional, ProfessionalInformations, Study } from '../interfaces/professionals'
 
 class ProfessionalModel {
     private prisma : PrismaClient
@@ -103,18 +103,7 @@ class ProfessionalModel {
       return { ...orderedRequest }
     }
 
-    public async listPagination (data: {
-      cursor?: string,
-      userAge?: number,
-      take?: number,
-      skip?: number,
-      field?: number,
-      specialty?: number,
-      forecast?: number,
-      modality?: number,
-      service?: number,
-      intervention?: number
-     }) : Promise<ProfessionalInformations | object> {
+    public async listPagination (data : GetPaginationProfessional) : Promise<ProfessionalInformations | object> {
       const takeSkipArgs = {
         take: data.take ? data.take : 5,
         skip: data.skip ? data.skip : 0

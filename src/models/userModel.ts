@@ -51,6 +51,7 @@ class UserModel {
       const passHash = await hash(passValue, 10)
       const createReq = await this.prisma.users.create({
         data: { ...rest,
+          fullName: rest.name + ' ' + rest.lastName,
           auth: {
             create: {
               password: passHash
@@ -161,11 +162,12 @@ class UserModel {
         if (rest.userForecastId) {
           rest.userForecastId = Number(rest.userForecastId)
         }
+
         const updateReq = await this.prisma.users.update({
           where: {
             id: id
           },
-          data: { ...rest },
+          data: { ...rest, fullName: rest.name + ' ' + rest.lastName },
           select: {
             id: true,
             email: true,
