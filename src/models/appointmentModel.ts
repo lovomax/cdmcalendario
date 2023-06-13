@@ -22,9 +22,11 @@ class AppointmentModel {
           AND: {
             professionalId: data.professionalId,
             userId: data.userId,
-            NOT: {
-              state: 'PENDING'
-            }
+            AND: [
+              { state: { not: 'PENDING' } },
+              { state: { not: 'CANCELED' } }
+            ]
+
           }
         }
       })
