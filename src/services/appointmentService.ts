@@ -52,7 +52,6 @@ class AppointmentService {
     }
     public async findAllPatients (payload : {id: string, searchString?: string}) : Promise<AppointmentResponse> {
       try {
-        console.log(payload)
         const listReq = await appointmentModel.findAllPatients(payload)
 
         return this.objResponse(DONE, OK, listReq)
@@ -64,7 +63,6 @@ class AppointmentService {
 
     public async findPatients (payload : {id: string, searchString?: string}) : Promise<AppointmentResponse> {
       try {
-        console.log(payload)
         const listReq = await appointmentModel.findPatients(payload)
 
         return this.objResponse(DONE, OK, listReq)

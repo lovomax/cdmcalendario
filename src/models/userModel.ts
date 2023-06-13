@@ -97,7 +97,8 @@ class UserModel {
                 professionalInterventions: true,
                 professionalModalities: true,
                 professionalPaymentMethods: true,
-                professionalSpecialties: true
+                professionalSpecialties: true,
+                professionalServices: true
               }
             },
             phoneNumbers: true,
