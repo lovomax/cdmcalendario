@@ -177,7 +177,19 @@ class AppointmentModel {
             date: 'asc'
           }
         })
-        return listAppointmentReq
+        const countAppointment = await this.prisma.appointments.count({
+          where: {
+            AND: {
+              ...(data.userRut && {
+                users: {
+                  rut: {
+                    equals: data.userRut
+                  }
+                }
+              }),
+              date: { lte: data.endDate, gte: data.startDate } } }
+        })
+        return { appointments: listAppointmentReq, count: countAppointment }
       }
       throw Error('Unauthorized entry')
     }
@@ -213,7 +225,21 @@ class AppointmentModel {
           date: 'asc'
         }
       })
-      return listAppointmentReq
+
+      const countAppointment = await this.prisma.appointments.count({
+        where: {
+          AND: {
+            professionalId: data.id,
+            ...(data.userRut && {
+              users: {
+                rut: {
+                  equals: data.userRut
+                }
+              }
+            }),
+            date: { lte: data.endDate, gte: data.startDate } } }
+      })
+      return { appointments: listAppointmentReq, count: countAppointment }
     }
 
     public async store (data: AppointmentUserInformation) : Promise<Appointment | object> {
