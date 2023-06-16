@@ -212,8 +212,8 @@ model Schedules {
   professionalId String 
   scheduleStart  DateTime      @db.Timestamptz(6) 
   scheduleEnd    DateTime      @db.Timestamptz(6) 
-  restStart      DateTime      @db.Timestamptz(6) 
-  restEnd        DateTime      @db.Timestamptz(6) 
+  restStart      DateTime?      @db.Timestamptz(6) 
+  restEnd        DateTime?      @db.Timestamptz(6) 
   dayOfWeek      Int           
   professionals  Professionals @relation(fields: [professionalId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
