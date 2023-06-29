@@ -28,7 +28,7 @@ routes.put('/update-schedules/:id', scheduleController.updateSchedule) // NEW
 routes.put('/delete-schedules/:id', scheduleController.deleteSchedule) // NEW
 
 routes.get('/get-all-schedules/:id', scheduleController.listAllSchedules)
-routes.post('/get-schedules/:id', scheduleController.list)
+routes.get('/get-schedules/:id/:date', scheduleController.list)
 routes.post('/get-special-hours/', scheduleController.listSpecialHour)
 routes.post('/create-schedule/:id', scheduleController.store)
 routes.put('/update-schedule/:id', scheduleController.update)

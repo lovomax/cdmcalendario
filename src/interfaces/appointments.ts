@@ -15,6 +15,7 @@ export interface AppointmentUpdate extends Appointment {
     chosenPaymentMethod: number
     state: state
     sessionNumber: number
+    price: number
 }
 
 type state = 'BOOKED' | 'CONFIRMED' | 'CANCELED' | 'RESCHEDULED' | 'PENDING'
@@ -25,6 +26,7 @@ export interface AppointmentUserInformation extends Appointment {
     birthDate?: Date
     email?: string
     rut?: string
+    price: number
     phoneNumbers: string
     whatsAppNumbers: string
     sessionNumber: number
@@ -41,6 +43,7 @@ export interface AppointmentProfessional {
     userId: string
     date: Date
     state: state
+    price: number
     sessionNumber: number
     observation: string
     chosenField: number

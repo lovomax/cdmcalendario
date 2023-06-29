@@ -152,6 +152,7 @@ class AppointmentModel {
             chosenPaymentMethod: true,
             chosenSpecialty: true,
             chosenService: true,
+            price: true,
             users: {
               select: {
                 id: true,
@@ -211,6 +212,7 @@ class AppointmentModel {
           chosenPaymentMethod: true,
           chosenSpecialty: true,
           chosenService: true,
+          price: true,
           users: {
             select: {
               id: true,
@@ -292,7 +294,8 @@ class AppointmentModel {
           chosenModality: data.chosenModality,
           chosenPaymentMethod: data.chosenPaymentMethod,
           chosenService: data.chosenSpecialty,
-          chosenSpecialty: data.chosenSpecialty
+          chosenSpecialty: data.chosenSpecialty,
+          price: data.price
         } })
 
       return updateReq

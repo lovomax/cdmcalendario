@@ -8,42 +8,58 @@ export interface ProfessionalFields{
     id: number
     professionalId: string
     specializedId: number
+    toDelete: boolean
 }
 
 export interface ProfessionalForecasts{
     id: number
     professionalId: string
     specializedId: number
+    toDelete: boolean
 }
 
 export interface ProfessionalInterventions{
     id: number
     professionalId: string
     specializedId: number
+    toDelete: boolean
 }
 
 export interface ProfessionalModalities{
     id: number
     professionalId: string
     specializedId: number
+    toDelete: boolean
 }
 
 export interface ProfessionalPaymentMethods{
     id: number
     professionalId: string
     specializedId: number
+    toDelete: boolean
 }
 
 export interface ProfessionalSpecialties{
     id: number
     professionalId: string
     specializedId: number
+    toDelete: boolean
 }
 
 export interface ProfessionalServices{
     id: number
     professionalId: string
+    toDelete: boolean
     specializedId: number
+}
+
+export interface ServicePrices {
+    id: number
+    serviceId: number
+    serviceSpecializedId: number
+    forecastId: number
+    forecastSpecializedId: number
+    price: number
 }
 
 export interface Field{
@@ -95,6 +111,7 @@ export interface ProfessionalInformations extends Professional {
     professionalPaymentMethods: ProfessionalPaymentMethods[]
     professionalSpecialties: ProfessionalSpecialties[]
     professionalServices: ProfessionalServices[]
+    servicePrices: ServicePrices[]
 }
 
 export interface GetPaginationProfessional {

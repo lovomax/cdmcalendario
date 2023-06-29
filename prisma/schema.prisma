@@ -22,6 +22,7 @@ model Appointments {
   chosenPaymentMethod    Int?
   chosenService          Int?
   observation            String?
+  price                  Int
   state                  State            @default(PENDING)
   field                  Fields?          @relation(fields: [chosenField], references: [id], onUpdate: NoAction, onDelete: Cascade)
   forecast               Forecasts?       @relation(fields: [chosenForecast], references: [id], onUpdate: NoAction, onDelete: Cascade)
@@ -91,12 +92,24 @@ model PhoneNumbers {
   @@map("phone_numbers")
 }
 
+model ServicePrices {
+  id             Int           @id @default(autoincrement())
+  serviceId      Int
+  serviceSpecializedId Int
+  forecastId     Int
+  forecastSpecializedId Int
+  price          Int
+  services       ProfessionalServices      @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  forecasts      ProfessionalForecasts     @relation(fields: [forecastId], references: [id], onDelete: Cascade)
+}
+
 model ProfessionalFields {
   id             Int           @id @default(autoincrement()) 
   professionalId String 
-  specializedId        Int 
+  specializedId  Int 
   fields         Fields        @relation(fields: [specializedId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   professionals  Professionals @relation(fields: [professionalId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
 
   @@index([specializedId])
   @@index([professionalId])
@@ -106,9 +119,10 @@ model ProfessionalFields {
 model ProfessionalForecasts {
   id             Int           @id @default(autoincrement()) 
   professionalId String 
-  specializedId     Int 
+  specializedId  Int 
   forecasts      Forecasts     @relation(fields: [specializedId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   professionals  Professionals @relation(fields: [professionalId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  servicePrices  ServicePrices[] 
 
   @@index([specializedId])
   @@index([professionalId])
@@ -154,9 +168,10 @@ model ProfessionalPaymentMethods {
 model ProfessionalServices {
   id             Int           @id @default(autoincrement()) 
   professionalId String 
-  specializedId    Int 
+  specializedId  Int 
   professionals  Professionals @relation(fields: [professionalId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   specialties    Services   @relation(fields: [specializedId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  servicePrices  ServicePrices[]
 
   @@index([professionalId])
   @@index([specializedId])

@@ -98,7 +98,7 @@ class UserModel {
                 professionalModalities: true,
                 professionalPaymentMethods: true,
                 professionalSpecialties: true,
-                professionalServices: true
+                professionalServices: { include: { servicePrices: true } }
               }
             },
             phoneNumbers: true,
