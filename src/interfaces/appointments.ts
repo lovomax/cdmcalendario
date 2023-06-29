@@ -16,6 +16,7 @@ export interface AppointmentUpdate extends Appointment {
     state: state
     sessionNumber: number
     price: number
+    comissionPrice: number
 }
 
 type state = 'BOOKED' | 'CONFIRMED' | 'CANCELED' | 'RESCHEDULED' | 'PENDING'

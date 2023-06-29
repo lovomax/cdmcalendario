@@ -23,6 +23,7 @@ model Appointments {
   chosenService          Int?
   observation            String?
   price                  Int
+  comissionPrice         Int?
   state                  State            @default(PENDING)
   field                  Fields?          @relation(fields: [chosenField], references: [id], onUpdate: NoAction, onDelete: Cascade)
   forecast               Forecasts?       @relation(fields: [chosenForecast], references: [id], onUpdate: NoAction, onDelete: Cascade)

@@ -15,6 +15,11 @@ class AppointmentController {
     return res.status(httpStatus[service.status]).json(service)
   }
 
+  public async listInvoices (req: Request, res: Response) : Promise<Response> {
+    const service = await appointmentService.listInvoices({ id: req.params.id })
+    return res.status(httpStatus[service.status]).json(service)
+  }
+
   public async listPatients (req: Request, res: Response) : Promise<Response> {
     const service = await appointmentService.listPatients({ id: req.params.id })
     return res.status(httpStatus[service.status]).json(service)
