@@ -28,7 +28,7 @@ routes.put('/update-schedules/:id', scheduleController.updateSchedule) // NEW
 routes.put('/delete-schedules/:id', scheduleController.deleteSchedule) // NEW
 
 routes.get('/get-all-schedules/:id', scheduleController.listAllSchedules)
-routes.post('/get-schedules/:id', scheduleController.list)
+routes.get('/get-schedules/:id/:date', scheduleController.list)
 routes.post('/get-special-hours/', scheduleController.listSpecialHour)
 routes.post('/create-schedule/:id', scheduleController.store)
 routes.put('/update-schedule/:id', scheduleController.update)
@@ -37,6 +37,7 @@ routes.get('/list-appointment/:id', appointmentController.list)
 routes.get('/get-session-number/:pid/:uid', appointmentController.getSessionNumber)
 routes.get('/find-patients/:id', appointmentController.findPatients)
 routes.get('/find-all-patients/:id', appointmentController.findAllPatients)
+routes.get('/list-invoices/:id', appointmentController.listInvoices)
 routes.get('/get-patients/:id', appointmentController.listPatients)
 routes.get('/get-all-registers/:id/:start/:end', appointmentController.listAllRegisters)
 routes.get('/get-registers/:id/:start/:end', appointmentController.listRegisters)

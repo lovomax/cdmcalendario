@@ -48,8 +48,7 @@ class ProfessionalModel {
 
     public async update (data : ProfessionalInformations, idInformation : GetProfessional) : Promise<ProfessionalInformations| object> {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { userId, studies, dateRangeStart, dateRangeEnd, ...rest } = data
-
+      const { userId, studies, dateRangeStart, dateRangeEnd, servicePrices, ...rest } = data
       const updateReq = Object.entries(rest).map(async ([key, value]) => {
         if (value) {
           const arrayAttribute = value.map(async (obj) => {
@@ -57,13 +56,21 @@ class ProfessionalModel {
               const sameProfessional = await this.prisma[key].findFirst({ where: { id: obj.id } })
               if (sameProfessional) {
                 if (sameProfessional.professionalId === idInformation.id) {
-                  return this.prisma[key].delete({ where: { id: obj.id } })
+                  const { toDelete } = obj
+                  if (toDelete) {
+                    return this.prisma[key].delete({ where: { id: obj.id } })
+                  }/*  else {
+                    if (rest.personalPrice) {
+                      return this.prisma[key].update({ where: { id: obj.id }, data: { ...rest } })
+                    }
+                  } */
                 }
               }
             } else {
-              const objWithId = { ...obj, professionalId: idInformation.id }
+              const { toDelete, ...rest } = obj
+              const objWithId = { ...rest, professionalId: idInformation.id }
               const repeated = await this.prisma[key].findFirst({ where: { [Object.keys(obj)[0]]: objWithId[Object.keys(obj)[0]], AND: { professionalId: idInformation.id } } })
-              if (!repeated) {
+              if (!toDelete || !repeated) {
                 return this.prisma[key].create({ data: { ...objWithId } })
               } else {
                 return this.prisma[key].delete({ where: { id: repeated.id } })
@@ -75,6 +82,32 @@ class ProfessionalModel {
           return { [key]: [...promiseAttribute] }
         }
       })
+      const promiseResolve = await Promise.all(updateReq)
+      const serviceObj : object[] = []
+      if (servicePrices) {
+        servicePrices.forEach(async (obj) => {
+          if (obj.id) {
+            console.log('A')
+            serviceObj.push(this.prisma.servicePrices.update({ where: { id: obj.id }, data: { ...obj } }))
+          } else if (obj.serviceId && obj.forecastId) {
+            console.log('B')
+            const { serviceId, ...prices } = obj
+            const foundService = await this.prisma.professionalServices.findFirst({ where: { id: serviceId, professionalId: idInformation.id } })
+            if (foundService && prices.price) {
+              serviceObj.push(this.prisma.professionalServices.update({ where: { id: serviceId }, data: { servicePrices: { create: { ...prices } } } }))
+            }
+          } else if (obj.forecastSpecializedId && obj.serviceSpecializedId && obj.price) {
+            console.log('C')
+            const forecast = await this.prisma.professionalForecasts.findFirst({ where: { specializedId: obj.forecastSpecializedId, professionalId: idInformation.id }, select: { id: true } })
+            const service = await this.prisma.professionalServices.findFirst({ where: { specializedId: obj.serviceSpecializedId, professionalId: idInformation.id }, select: { id: true } })
+            console.log(service)
+            if (forecast && service) {
+              console.log('D')
+              serviceObj.push(this.prisma.servicePrices.create({ data: { ...obj, forecastId: forecast.id, serviceId: service.id } }))
+            }
+          }
+        })
+      }
 
       const studyObj : object[] = []
 
@@ -94,7 +127,8 @@ class ProfessionalModel {
             ...updateDate
           } })
       }
-      const promiseResolve = await Promise.all(updateReq)
+
+      await Promise.all(serviceObj)
 
       promiseResolve.push({ studies: studyObj })
 
@@ -209,7 +243,7 @@ class ProfessionalModel {
           professionalModalities: true,
           professionalPaymentMethods: true,
           professionalSpecialties: true,
-          professionalServices: true
+          professionalServices: { include: { servicePrices: true } }
         }
       })
 

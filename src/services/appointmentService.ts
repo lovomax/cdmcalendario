@@ -39,7 +39,16 @@ class AppointmentService {
         return this.objResponse(FAILED, OK, err)
       }
     }
+    public async listInvoices (payload : GetProfessional) : Promise<AppointmentResponse> {
+      try {
+        const listReq = await appointmentModel.listInvoices(payload)
 
+        return this.objResponse(DONE, OK, listReq)
+      } catch (err) {
+        console.log(err)
+        return this.objResponse(FAILED, OK, err)
+      }
+    }
     public async listPatients (payload : GetProfessional) : Promise<AppointmentResponse> {
       try {
         const listReq = await appointmentModel.listPatients(payload)

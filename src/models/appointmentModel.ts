@@ -108,7 +108,31 @@ class AppointmentModel {
 
       return listAppointmentReq
     }
+    public async listInvoices (data: {id: string}) : Promise<object> {
+      const listAppointmentReq = await this.prisma.appointments.findMany({
+        where: { AND: { professionalId: data.id, state: { equals: 'CONFIRMED' } } },
+        select: {
+          id: true,
+          professionalId: true,
+          date: true,
+          sessionNumber: true,
+          price: true,
+          comissionPrice: true,
+          users: {
+            select: {
+              id: true,
+              name: true,
+              lastName: true
+            }
+          }
+        },
+        orderBy: {
+          date: 'asc'
+        }
+      })
 
+      return listAppointmentReq
+    }
     public async listAllPatients (data : {id: string}) : Promise<object> {
       const verify = await this.prisma.users.findUniqueOrThrow({ where: { id: data.id } })
       if (verify.roleOfUser !== 'ADMIN') {
@@ -152,6 +176,8 @@ class AppointmentModel {
             chosenPaymentMethod: true,
             chosenSpecialty: true,
             chosenService: true,
+            price: true,
+            comissionPrice: true,
             users: {
               select: {
                 id: true,
@@ -211,6 +237,8 @@ class AppointmentModel {
           chosenPaymentMethod: true,
           chosenSpecialty: true,
           chosenService: true,
+          price: true,
+          comissionPrice: true,
           users: {
             select: {
               id: true,
@@ -292,7 +320,9 @@ class AppointmentModel {
           chosenModality: data.chosenModality,
           chosenPaymentMethod: data.chosenPaymentMethod,
           chosenService: data.chosenSpecialty,
-          chosenSpecialty: data.chosenSpecialty
+          chosenSpecialty: data.chosenSpecialty,
+          price: data.price,
+          comissionPrice: data.comissionPrice
         } })
 
       return updateReq

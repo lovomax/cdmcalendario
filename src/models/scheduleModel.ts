@@ -42,7 +42,6 @@ class ScheduleModel {
           appointments: {
             where: {
               AND: {
-
                 date: {
                   lte: new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 1),
                   gte: new Date(monthDate.getFullYear(), monthDate.getMonth())
