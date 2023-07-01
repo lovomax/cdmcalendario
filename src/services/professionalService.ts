@@ -77,6 +77,16 @@ class ProfessionalService {
         return this.objResponse(FAILED, OK, err)
       }
     }
+
+    public async getCredits (payload : GetProfessional) : Promise<ProfessionalResponse> {
+      try {
+        const findReq = await professionalModel.getCredits(payload)
+
+        return this.objResponse(DONE, OK, findReq)
+      } catch (err) {
+        return this.objResponse(FAILED, OK, err)
+      }
+    }
 }
 
 export default new ProfessionalService()

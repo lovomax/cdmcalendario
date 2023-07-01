@@ -197,6 +197,7 @@ model Professionals {
   dateRangeStart             Int?
   dateRangeEnd               Int?
   appointments               Appointments[]
+  professionalCredits        ProfessionalCredits?
   professionalFields         ProfessionalFields[]
   professionalForecasts      ProfessionalForecasts[]
   professionalInterventions  ProfessionalInterventions[]
@@ -211,6 +212,14 @@ model Professionals {
   studies                    Studies[]
 
   @@map("professionals")
+}
+
+model ProfessionalCredits {
+  id             Int         @id @default(autoincrement())
+  professionalId String      @unique
+  credits        Int
+  professional   Professionals? @relation(fields: [professionalId], references: [id])
+  @@map("professional_credits")
 }
 
 model RestDays {
