@@ -22,6 +22,7 @@ routes.put('/update-professional/:id', professionalController.update)
 /* routes.get('/get-professionals', professionalController.list) */
 routes.get('/get-professionals', professionalController.listPagination)
 routes.get('/get-professional/:id', professionalController.getProfessional)
+routes.get('/get-credits/:id', professionalController.getCredits)
 
 routes.post('/create-schedules/:id', scheduleController.createSchedule) // NEW
 routes.put('/update-schedules/:id', scheduleController.updateSchedule) // NEW

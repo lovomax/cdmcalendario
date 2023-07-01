@@ -59,11 +59,7 @@ class ProfessionalModel {
                   const { toDelete } = obj
                   if (toDelete) {
                     return this.prisma[key].delete({ where: { id: obj.id } })
-                  }/*  else {
-                    if (rest.personalPrice) {
-                      return this.prisma[key].update({ where: { id: obj.id }, data: { ...rest } })
-                    }
-                  } */
+                  }
                 }
               }
             } else {
@@ -87,22 +83,18 @@ class ProfessionalModel {
       if (servicePrices) {
         servicePrices.forEach(async (obj) => {
           if (obj.id) {
-            console.log('A')
             serviceObj.push(this.prisma.servicePrices.update({ where: { id: obj.id }, data: { ...obj } }))
           } else if (obj.serviceId && obj.forecastId) {
-            console.log('B')
             const { serviceId, ...prices } = obj
             const foundService = await this.prisma.professionalServices.findFirst({ where: { id: serviceId, professionalId: idInformation.id } })
             if (foundService && prices.price) {
               serviceObj.push(this.prisma.professionalServices.update({ where: { id: serviceId }, data: { servicePrices: { create: { ...prices } } } }))
             }
           } else if (obj.forecastSpecializedId && obj.serviceSpecializedId && obj.price) {
-            console.log('C')
             const forecast = await this.prisma.professionalForecasts.findFirst({ where: { specializedId: obj.forecastSpecializedId, professionalId: idInformation.id }, select: { id: true } })
             const service = await this.prisma.professionalServices.findFirst({ where: { specializedId: obj.serviceSpecializedId, professionalId: idInformation.id }, select: { id: true } })
             console.log(service)
             if (forecast && service) {
-              console.log('D')
               serviceObj.push(this.prisma.servicePrices.create({ data: { ...obj, forecastId: forecast.id, serviceId: service.id } }))
             }
           }
@@ -252,6 +244,50 @@ class ProfessionalModel {
       }
 
       return findReq
+    }
+
+    public async getCredits (data: {id: string}) : Promise <object> {
+      const findReq = await this.prisma.professionalCredits.findUniqueOrThrow({ where: { professionalId: data.id }, select: { credits: true } })
+
+      return findReq
+    }
+
+    public async getAllCredits (data : {userId: string}) : Promise <object> {
+      const admin = await this.prisma.users.findUniqueOrThrow({ where: { id: data.userId } })
+      if (admin.roleOfUser !== 'ADMIN') {
+        throw Error()
+      }
+
+      const findProfessionals = await this.prisma.professionals.findMany({ select: {
+        id: true,
+        users: { select: {
+          fullName: true,
+          imageURL: true
+        } },
+        professionalCredits: true
+      } })
+
+      return findProfessionals
+    }
+
+    public async updateCredits (data : {professionalId: string, userId: string, amount: number}) : Promise <object> {
+      const admin = await this.prisma.users.findUniqueOrThrow({ where: { id: data.userId } })
+      if (admin.roleOfUser !== 'ADMIN') {
+        throw Error()
+      }
+
+      const updateReq = await this.prisma.professionalCredits.update({ where: { professionalId: data.professionalId }, data: { credits: data.amount } })
+      return updateReq
+    }
+
+    public async createCredits (data : {professionalId: string, userId: string, amount: number}) : Promise <object> {
+      const admin = await this.prisma.users.findUniqueOrThrow({ where: { id: data.userId } })
+      if (admin.roleOfUser !== 'ADMIN') {
+        throw Error()
+      }
+
+      const updateReq = await this.prisma.professionalCredits.create({ data: { professionalId: data.professionalId, credits: data.amount } })
+      return updateReq
     }
 }
 

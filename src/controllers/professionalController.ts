@@ -40,6 +40,11 @@ class ProfessionalController {
     const service = await professionalService.getProfessional(professionalId)
     return res.status(httpStatus[service.status]).json(service)
   }
+  public async getCredits (req: Request, res: Response) : Promise<Response> {
+    const professionalId = { id: req.params.id }
+    const service = await professionalService.getCredits(professionalId)
+    return res.status(httpStatus[service.status]).json(service)
+  }
 }
 
 export default new ProfessionalController()
