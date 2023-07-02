@@ -17,6 +17,11 @@ routes.put('/update-user/:id', userController.update)
 routes.get('/list', verifyToken, userController.list)
 routes.get('/get-user/:id', userController.getUser)
 
+routes.get('/get-comissions', userController.comissionGet)
+routes.post('/create-comission/:id', userController.comissionCreate)
+routes.put('/update-comission/:id/:cid', userController.comissionUpdate)
+routes.delete('/delete-comission/:id/:cid', userController.comissionDelete)
+
 routes.post('/sign-professional/:id', verifyToken, professionalController.store)
 routes.put('/update-professional/:id', professionalController.update)
 /* routes.get('/get-professionals', professionalController.list) */

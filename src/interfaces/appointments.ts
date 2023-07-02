@@ -37,6 +37,7 @@ export interface AppointmentUserInformation extends Appointment {
     chosenModality: number
     chosenSpecialty: number
     chosenPaymentMethod: number
+    chosenService: number
 }
 
 export interface AppointmentProfessional {

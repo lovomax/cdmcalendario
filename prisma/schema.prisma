@@ -41,6 +41,14 @@ model Appointments {
   @@map("appointments")
 }
 
+model Comissions {
+  id               Int        @id @default(autoincrement())
+  name             String
+  price            Int
+
+  @@map("comissions")
+}
+
 model Fields {
   id                 Int                  @id @default(autoincrement()) 
   name               String 

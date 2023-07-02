@@ -19,21 +19,18 @@ class AppointmentModel {
     public async getSessionNumber (data: {professionalId: string, userId: string}) : Promise<Appointment | object> {
       const listAppointment = await this.prisma.appointments.findMany({
         where: {
-          AND: {
-            professionalId: data.professionalId,
-            userId: data.userId,
-            AND: [
-              { state: { not: 'PENDING' } },
-              { state: { not: 'CANCELED' } }
-            ]
-
-          }
+          professionalId: data.professionalId,
+          userId: data.userId,
+          AND: [
+            { state: { not: 'PENDING' } },
+            { state: { not: 'CANCELED' } }
+          ]
         }
       })
       if (listAppointment instanceof Array) {
         return { totalSessionNumber: listAppointment.length }
       }
-
+      console.log(listAppointment)
       return { totalSessionNumber: 0 }
     }
 

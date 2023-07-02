@@ -67,6 +67,44 @@ class UserService {
         return this.objResponse(FAILED, OK, err)
       }
     }
+
+    public async comissionGet () : Promise<UserResponse> {
+      try {
+        const createReq = await userModel.comissionGet()
+        return this.objResponse(CREATED, OK, createReq)
+      } catch (err) {
+        console.log(err)
+        return this.objResponse(FAILED, OK, err)
+      }
+    }
+
+    public async comissionCreate (payload : {userId: string, name: string, price: number}) : Promise<UserResponse> {
+      try {
+        const createReq = await userModel.comissionCreate(payload)
+        return this.objResponse(CREATED, OK, createReq)
+      } catch (err) {
+        console.log(err)
+        return this.objResponse(FAILED, OK, err)
+      }
+    }
+    public async comissionUpdate (payload : {userId: string, id: number, name: string, price: number}) : Promise<UserResponse> {
+      try {
+        const createReq = await userModel.comissionUpdate(payload)
+        return this.objResponse(CREATED, OK, createReq)
+      } catch (err) {
+        console.log(err)
+        return this.objResponse(FAILED, OK, err)
+      }
+    }
+    public async comissionDelete (payload : {userId: string, id: number}) : Promise<UserResponse> {
+      try {
+        const createReq = await userModel.comissionDelete(payload)
+        return this.objResponse(CREATED, OK, createReq)
+      } catch (err) {
+        console.log(err)
+        return this.objResponse(FAILED, OK, err)
+      }
+    }
 }
 
 export default new UserService()
