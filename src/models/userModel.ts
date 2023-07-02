@@ -188,6 +188,39 @@ class UserModel {
         throw new Error(err)
       }
     }
+
+    public async comissionCreate (data : {userId: string, name: string, price: number}) : Promise<object> {
+      const { userId, ...rest } = data
+      const user = await this.prisma.users.findUniqueOrThrow({ where: { id: userId }, select: { id: true, roleOfUser: true } })
+      if (user.roleOfUser !== 'ADMIN') {
+        throw Error
+      }
+      const createReq = await this.prisma.comissions.create({ data: { ...rest } })
+      return createReq
+    }
+    public async comissionGet () : Promise<object> {
+      const comissions = await this.prisma.comissions.findMany()
+
+      return comissions
+    }
+    public async comissionUpdate (data : {userId: string, id: number, name: string, price: number}) : Promise<object> {
+      const { userId, ...rest } = data
+      const user = await this.prisma.users.findUniqueOrThrow({ where: { id: userId }, select: { id: true, roleOfUser: true } })
+      if (user.roleOfUser !== 'ADMIN') {
+        throw Error
+      }
+      const updateReq = await this.prisma.comissions.update({ where: { id: rest.id }, data: { ...rest } })
+      return updateReq
+    }
+    public async comissionDelete (data: {userId: string, id: number}) : Promise<object> {
+      const { userId, ...rest } = data
+      const user = await this.prisma.users.findUniqueOrThrow({ where: { id: userId }, select: { id: true, roleOfUser: true } })
+      if (user.roleOfUser !== 'ADMIN') {
+        throw Error
+      }
+      const createReq = await this.prisma.comissions.delete({ where: { id: rest.id } })
+      return createReq
+    }
 }
 
 export default new UserModel()
