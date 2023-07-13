@@ -2,6 +2,16 @@ export interface Study {
     id: number
     professionalId: string
     title: string
+    university: string
+    yearOfEgress: number
+    toDelete: boolean
+}
+
+export interface InitialStudies {
+    id?: number
+    university: string
+    title: string
+    yearOfEgress: number
 }
 
 export interface ProfessionalFields{

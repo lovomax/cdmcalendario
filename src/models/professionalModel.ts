@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { GetPaginationProfessional, GetProfessional, Professional, ProfessionalInformations, Study } from '../interfaces/professionals'
+import { GetPaginationProfessional, GetProfessional, InitialStudies, Professional, ProfessionalInformations } from '../interfaces/professionals'
 
 class ProfessionalModel {
     private prisma : PrismaClient
@@ -11,15 +11,13 @@ class ProfessionalModel {
     public async store (data : ProfessionalInformations) : Promise<Professional | object> {
       const { studies: study, dateRangeStart, dateRangeEnd, userId, ...rest } = data
       try {
-        const justOneStudy : Study = study[0]
+        const studies : InitialStudies[] = study
         const dateCreate = { dateRangeStart, dateRangeEnd }
         const createReq = await this.prisma.professionals.create({
           data: {
             userId,
             studies: {
-              create: {
-                ...justOneStudy
-              }
+              createMany: { data: studies }
             },
             ...dateCreate
           }
@@ -102,14 +100,31 @@ class ProfessionalModel {
       }
 
       const studyObj : object[] = []
+      const studiesReq : object[] = []
 
       if (studies !== undefined && studies.length > 0) {
+        const studiesToDelete : number[] = []
+        studies.forEach((study) => {
+          if (study.toDelete) {
+            studiesToDelete.push(study.id)
+          }
+        })
+        const restOfStudies = studies.filter((study) => !study.toDelete)
         const sameProfessional = await this.prisma.studies.findFirst({ where: { professionalId: idInformation.id } })
-
         if (sameProfessional) {
-          studyObj.push(await this.prisma.studies.update({ where: { id: sameProfessional.id }, data: { ...studies[0] } }))
-        } else {
-          studyObj.push(await this.prisma.studies.create({ data: { ...studies[0], professionalId: idInformation.id } }))
+          if (studiesToDelete) {
+            studyObj.push(await this.prisma.studies.deleteMany({ where: { id: { in: studiesToDelete } } }))
+          }
+          restOfStudies.forEach((study) => {
+            console.log(study)
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { toDelete, ...rest } = study
+            if (study.id) {
+              studiesReq.push(this.prisma.studies.update({ where: { id: study.id }, data: rest }))
+            } else {
+              studiesReq.push(this.prisma.studies.create({ data: rest }))
+            }
+          })
         }
       }
       if (dateRangeStart || dateRangeEnd) {
@@ -121,7 +136,9 @@ class ProfessionalModel {
       }
 
       await Promise.all(serviceObj)
-
+      if (studiesReq.length) {
+        await Promise.all(studiesReq)
+      }
       promiseResolve.push({ studies: studyObj })
 
       const orderedRequest = await this.getProfessional({ id: idInformation.id })
