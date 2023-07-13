@@ -293,6 +293,7 @@ class AppointmentModel {
     }
 
     public async createProfessionalAppointment (data : AppointmentProfessional) : Promise<Appointment> {
+      console.log(data)
       const createReq = await this.prisma.appointments.create({
         data: {
           ...data
