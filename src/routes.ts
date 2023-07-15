@@ -13,43 +13,41 @@ routes.get('/checkhealth', (_req, res) => {
 
 routes.post('/sign-up', userController.store)
 routes.post('/log-in', userController.logIn)
-routes.put('/update-user/:id', userController.update)
+routes.put('/update-user/:id', verifyToken, userController.update)
 routes.get('/list', verifyToken, userController.list)
-routes.get('/get-user/:id', userController.getUser)
 
-routes.get('/get-comissions', userController.comissionGet)
-routes.post('/create-comission/:id', userController.comissionCreate)
-routes.put('/update-comission/:id/:cid', userController.comissionUpdate)
-routes.delete('/delete-comission/:id/:cid', userController.comissionDelete)
+routes.get('/get-comissions', verifyToken, userController.comissionGet)
+routes.post('/create-comission/:id', verifyToken, userController.comissionCreate)
+routes.put('/update-comission/:id/:cid', verifyToken, userController.comissionUpdate)
+routes.delete('/delete-comission/:id/:cid', verifyToken, userController.comissionDelete)
 
 routes.post('/sign-professional/:id', verifyToken, professionalController.store)
-routes.put('/update-professional/:id', professionalController.update)
-/* routes.get('/get-professionals', professionalController.list) */
+routes.put('/update-professional/:id', verifyToken, professionalController.update)
 routes.get('/get-professionals', professionalController.listPagination)
 routes.get('/get-professional/:id', professionalController.getProfessional)
-routes.get('/get-credits/:id', professionalController.getCredits)
+routes.get('/get-credits/:id', verifyToken, professionalController.getCredits)
 
-routes.post('/create-schedules/:id', scheduleController.createSchedule) // NEW
-routes.put('/update-schedules/:id', scheduleController.updateSchedule) // NEW
-routes.put('/delete-schedules/:id', scheduleController.deleteSchedule) // NEW
+routes.post('/create-schedules/:id', verifyToken, scheduleController.createSchedule) // NEW
+routes.put('/update-schedules/:id', verifyToken, scheduleController.updateSchedule) // NEW
+routes.put('/delete-schedules/:id', verifyToken, scheduleController.deleteSchedule) // NEW
 
-routes.get('/get-all-schedules/:id', scheduleController.listAllSchedules)
+routes.get('/get-all-schedules/:id', verifyToken, scheduleController.listAllSchedules)
 routes.get('/get-schedules/:id/:date', scheduleController.list)
 routes.post('/get-special-hours/', scheduleController.listSpecialHour)
-routes.post('/create-schedule/:id', scheduleController.store)
-routes.put('/update-schedule/:id', scheduleController.update)
+routes.post('/create-schedule/:id', verifyToken, scheduleController.store)
+routes.put('/update-schedule/:id', verifyToken, scheduleController.update)
 
-routes.get('/list-appointment/:id', appointmentController.list)
-routes.get('/get-session-number/:pid/:uid', appointmentController.getSessionNumber)
-routes.get('/find-patients/:id', appointmentController.findPatients)
-routes.get('/find-all-patients/:id', appointmentController.findAllPatients)
-routes.get('/list-invoices/:id', appointmentController.listInvoices)
-routes.get('/get-patients/:id', appointmentController.listPatients)
-routes.get('/get-all-registers/:id/:start/:end', appointmentController.listAllRegisters)
-routes.get('/get-registers/:id/:start/:end', appointmentController.listRegisters)
+routes.get('/list-appointment/:id', verifyToken, appointmentController.list)
+routes.get('/get-session-number/:pid/:uid', verifyToken, appointmentController.getSessionNumber)
+routes.get('/find-patients/:id', verifyToken, appointmentController.findPatients)
+routes.get('/find-all-patients/:id', verifyToken, appointmentController.findAllPatients)
+routes.get('/list-invoices/:id', verifyToken, appointmentController.listInvoices)
+routes.get('/get-patients/:id', verifyToken, appointmentController.listPatients)
+routes.get('/get-all-registers/:id/:start/:end', verifyToken, appointmentController.listAllRegisters)
+routes.get('/get-registers/:id/:start/:end', verifyToken, appointmentController.listRegisters)
 routes.post('/create-appointment/:id', appointmentController.store)
-routes.post('/create-professional-appointment', appointmentController.appointmentProfessional)
-routes.put('/update-appointment', appointmentController.update)
-routes.delete('/delete-appointment', appointmentController.delete)
+routes.post('/create-professional-appointment', verifyToken, appointmentController.appointmentProfessional)
+routes.put('/update-appointment', verifyToken, appointmentController.update)
+routes.delete('/delete-appointment', verifyToken, appointmentController.delete)
 
 export default routes

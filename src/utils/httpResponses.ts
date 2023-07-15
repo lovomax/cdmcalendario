@@ -1,7 +1,8 @@
 export const status = {
   CREATED: 'CREATED',
   FAILED: 'FAILED',
-  DONE: 'DONE'
+  DONE: 'DONE',
+  FORBIDDEN: 'FORBIDDEN'
 }
 
 export const messages = {
