@@ -91,7 +91,6 @@ class ProfessionalModel {
           } else if (obj.forecastSpecializedId && obj.serviceSpecializedId && obj.price) {
             const forecast = await this.prisma.professionalForecasts.findFirst({ where: { specializedId: obj.forecastSpecializedId, professionalId: idInformation.id }, select: { id: true } })
             const service = await this.prisma.professionalServices.findFirst({ where: { specializedId: obj.serviceSpecializedId, professionalId: idInformation.id }, select: { id: true } })
-            console.log(service)
             if (forecast && service) {
               serviceObj.push(this.prisma.servicePrices.create({ data: { ...obj, forecastId: forecast.id, serviceId: service.id } }))
             }
@@ -116,7 +115,6 @@ class ProfessionalModel {
             studyObj.push(await this.prisma.studies.deleteMany({ where: { id: { in: studiesToDelete } } }))
           }
           restOfStudies.forEach((study) => {
-            console.log(study)
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { toDelete, ...rest } = study
             if (study.id) {
@@ -163,6 +161,11 @@ class ProfessionalModel {
             ...(data.userAge && { dateRangeStart: { lte: data.userAge }, dateRangeEnd: { gte: data.userAge } }),
             schedules: {
               some: {}
+            },
+            professionalServices: {
+              some: {
+                servicePrices: { some: {} }
+              }
             }
           }
         }

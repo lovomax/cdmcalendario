@@ -32,7 +32,7 @@ class UserService {
       try {
         const foundUser = await userModel.logIn(payload)
 
-        const token = jwt.sign({ id: foundUser, rut: foundUser.rut }, SECRET_KEY, { expiresIn: '4 days' })
+        const token = jwt.sign({ id: foundUser, rut: foundUser.rut }, SECRET_KEY, { expiresIn: '7 days' })
 
         return this.objResponse(DONE, OK, { user: { ...foundUser }, token: token })
       } catch (err) {

@@ -110,6 +110,7 @@ model ServicePrices {
   price          Int
   services       ProfessionalServices      @relation(fields: [serviceId], references: [id], onDelete: Cascade)
   forecasts      ProfessionalForecasts     @relation(fields: [forecastId], references: [id], onDelete: Cascade)
+  @@map("service_prices")
 }
 
 model ProfessionalFields {
@@ -202,6 +203,7 @@ model ProfessionalSpecialties {
 model Professionals {
   id                         String                       @id @default(uuid())
   userId                     String                       @unique
+  oldUserId                  Int?                         @unique
   dateRangeStart             Int?
   dateRangeEnd               Int?
   appointments               Appointments[]
@@ -309,6 +311,7 @@ model Studies {
 
 model Users {
   id              String               @id @default(uuid()) 
+  oldId           Int?                 @unique
   email           String?            
   imageURL        String? 
   name            String 
