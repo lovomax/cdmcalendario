@@ -179,7 +179,8 @@ class UserModel {
             rut: true,
             phoneNumbers: true,
             whatsAppNumbers: true,
-            userForecastId: true
+            userForecastId: true,
+            roleOfUser: true
           }
         })
 
