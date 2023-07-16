@@ -47,8 +47,10 @@ class ProfessionalModel {
     }
 
     public async update (data : ProfessionalInformations, idInformation : GetProfessional) : Promise<ProfessionalInformations| object> {
+      console.log('update')
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { userId, studies, dateRangeStart, dateRangeEnd, servicePrices, ...rest } = data
+      console.log(servicePrices)
       const updateReq = Object.entries(rest).map(async ([key, value]) => {
         if (value) {
           const arrayAttribute = value.map(async (obj) => {
@@ -79,22 +81,22 @@ class ProfessionalModel {
         }
       })
       const promiseResolve = await Promise.all(updateReq)
-      const serviceObj : object[] = []
+
       if (servicePrices) {
         servicePrices.forEach(async (obj) => {
           if (obj.id) {
-            serviceObj.push(this.prisma.servicePrices.update({ where: { id: obj.id }, data: { ...obj } }))
+            await this.prisma.servicePrices.update({ where: { id: obj.id }, data: { ...obj } })
           } else if (obj.serviceId && obj.forecastId) {
             const { serviceId, ...prices } = obj
             const foundService = await this.prisma.professionalServices.findFirst({ where: { id: serviceId, professionalId: idInformation.id } })
             if (foundService && prices.price) {
-              serviceObj.push(this.prisma.professionalServices.update({ where: { id: serviceId }, data: { servicePrices: { create: { ...prices } } } }))
+              await this.prisma.professionalServices.update({ where: { id: serviceId }, data: { servicePrices: { create: { ...prices } } } })
             }
           } else if (obj.forecastSpecializedId && obj.serviceSpecializedId && obj.price) {
             const forecast = await this.prisma.professionalForecasts.findFirst({ where: { specializedId: obj.forecastSpecializedId, professionalId: idInformation.id }, select: { id: true } })
             const service = await this.prisma.professionalServices.findFirst({ where: { specializedId: obj.serviceSpecializedId, professionalId: idInformation.id }, select: { id: true } })
             if (forecast && service) {
-              serviceObj.push(this.prisma.servicePrices.create({ data: { ...obj, forecastId: forecast.id, serviceId: service.id } }))
+              await this.prisma.servicePrices.create({ data: { ...obj, forecastId: forecast.id, serviceId: service.id } })
             }
           }
         })
@@ -134,8 +136,6 @@ class ProfessionalModel {
             ...updateDate
           } })
       }
-
-      await Promise.all(serviceObj)
       if (studiesReq.length) {
         await Promise.all(studiesReq)
       }
