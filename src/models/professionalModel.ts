@@ -9,7 +9,7 @@ class ProfessionalModel {
     }
 
     public async store (data : ProfessionalInformations) : Promise<Professional | object> {
-      const { studies: study, dateRangeStart, dateRangeEnd, userId, ...rest } = data
+      const { studies: study, dateRangeStart, dateRangeEnd, userId, servicePrices, ...rest } = data
       try {
         const studies : InitialStudies[] = study
         const dateCreate = { dateRangeStart, dateRangeEnd }
@@ -35,6 +35,8 @@ class ProfessionalModel {
             return attributeReq
           }
         })
+
+        await this.prisma.servicePrices.createMany({ data: servicePrices })
 
         const findReq = await this.getProfessional({ id: createReq.id })
         return { ...findReq }
