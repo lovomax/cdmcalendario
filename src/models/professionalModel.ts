@@ -245,7 +245,8 @@ class ProfessionalModel {
               birthDate: true,
               rut: true,
               phoneNumbers: true,
-              whatsAppNumbers: true
+              whatsAppNumbers: true,
+              roleOfUser: true
             }
           },
           studies: true,
