@@ -104,7 +104,6 @@ class ProfessionalModel {
 
       const studyObj : object[] = []
       const studiesReq : object[] = []
-
       if (studies !== undefined && studies.length > 0) {
         const studiesToDelete : number[] = []
         studies.forEach((study) => {
@@ -113,21 +112,19 @@ class ProfessionalModel {
           }
         })
         const restOfStudies = studies.filter((study) => !study.toDelete)
-        const sameProfessional = await this.prisma.studies.findFirst({ where: { professionalId: idInformation.id } })
-        if (sameProfessional) {
-          if (studiesToDelete) {
-            studyObj.push(await this.prisma.studies.deleteMany({ where: { id: { in: studiesToDelete } } }))
-          }
-          restOfStudies.forEach((study) => {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const { toDelete, ...rest } = study
-            if (study.id) {
-              studiesReq.push(this.prisma.studies.update({ where: { id: study.id }, data: rest }))
-            } else {
-              studiesReq.push(this.prisma.studies.create({ data: rest }))
-            }
-          })
+
+        if (studiesToDelete) {
+          studyObj.push(await this.prisma.studies.deleteMany({ where: { id: { in: studiesToDelete } } }))
         }
+        restOfStudies.forEach(async (study) => {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { toDelete, ...rest } = study
+          if (study.id) {
+            studiesReq.push(await this.prisma.studies.update({ where: { id: study.id }, data: rest }))
+          } else {
+            studiesReq.push(await this.prisma.studies.create({ data: rest }))
+          }
+        })
       }
       if (dateRangeStart || dateRangeEnd) {
         const updateDate = { dateRangeStart, dateRangeEnd }
@@ -136,13 +133,9 @@ class ProfessionalModel {
             ...updateDate
           } })
       }
-      if (studiesReq.length) {
-        await Promise.all(studiesReq)
-      }
       promiseResolve.push({ studies: studyObj })
 
       const orderedRequest = await this.getProfessional({ id: idInformation.id })
-
       return { ...orderedRequest }
     }
 
