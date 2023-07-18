@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon src/server.ts",
     "prebuild": "rimraf dist",
-    "build": "sucrase ./src -d ./dist --transforms typescript,imports"
+    "build": "sucrase ./src -d ./dist --transforms typescript,imports",
+    "start": "yarn && yarn dev"
   },
   "dependencies": {
     "@prisma/client": "^4.12.0",
