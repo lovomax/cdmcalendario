@@ -326,8 +326,8 @@ model Users {
   phoneNumbers    PhoneNumbers[]
   professionals   Professionals?
   whatsAppNumbers WhatsAppNumbers[]
-  auth            Auth @relation(fields: [authId], references: [id], onDelete: Cascade)
-  authId          String @unique
+  auth            Auth? @relation(fields: [authId], references: [id], onDelete: Cascade)
+  authId          String? @unique
 
   @@map("users")
 }
